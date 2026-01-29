@@ -6,10 +6,8 @@ import {
   Sparkles,
   Eye,
   Blend,
-  ImageIcon,
   Contrast,
 } from "lucide-react";
-import { useHaptics } from "@/hooks/use-native";
 
 type Tab =
   | "generate"
@@ -33,17 +31,14 @@ const tabs: { id: Tab; label: string; icon: typeof Palette }[] = [
 ];
 
 export function TabBar({ activeTab, onTabChange }: TabBarProps) {
-  const { selection } = useHaptics();
-
-  const handleTabChange = async (tab: Tab) => {
-    await selection();
+  const handleTabChange = (tab: Tab) => {
     onTabChange(tab);
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 pb-safe backdrop-blur-xl">
-      <div className="mx-auto max-w-lg">
-        <div className="flex items-center justify-around py-2 pb-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/95 pb-safe backdrop-blur-2xl">
+      <div className="mx-auto max-w-lg px-2">
+        <div className="flex items-center justify-around py-1.5">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -52,17 +47,41 @@ export function TabBar({ activeTab, onTabChange }: TabBarProps) {
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1 transition-colors duration-200",
-                  isActive ? "text-primary" : "text-muted-foreground"
+                  "group relative flex flex-col items-center gap-0.5 rounded-xl px-3 py-2 transition-all duration-300 ease-out",
+                  "active:scale-90",
+                  isActive 
+                    ? "text-foreground" 
+                    : "text-muted-foreground hover:text-foreground/70"
                 )}
               >
-                <Icon
+                {/* Active indicator pill */}
+                <span
                   className={cn(
-                    "h-5 w-5 transition-transform duration-200",
-                    isActive && "scale-110"
+                    "absolute inset-0 rounded-xl bg-primary/10 transition-all duration-300 ease-out",
+                    isActive ? "opacity-100 scale-100" : "opacity-0 scale-90"
                   )}
                 />
-                <span className="text-[10px] font-medium">{tab.label}</span>
+                
+                <span className="relative">
+                  <Icon
+                    className={cn(
+                      "h-5 w-5 transition-all duration-300 ease-out",
+                      isActive 
+                        ? "scale-110 text-primary" 
+                        : "group-hover:scale-105"
+                    )}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                </span>
+                
+                <span 
+                  className={cn(
+                    "relative text-[10px] font-semibold tracking-wide transition-all duration-300",
+                    isActive ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {tab.label}
+                </span>
               </button>
             );
           })}

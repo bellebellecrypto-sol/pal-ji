@@ -156,28 +156,41 @@ function HomeContent() {
       {showOnboarding && <Onboarding onComplete={handleOnboardingComplete} />}
       
       {/* Top Action Buttons */}
-      <div className="fixed right-4 top-4 z-50 flex gap-2 pt-safe">
+      <div className="fixed right-4 top-4 z-50 flex gap-3 pt-safe">
         <button
           onClick={() => setShowSaved(true)}
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-all",
+            "group relative flex h-11 w-11 items-center justify-center rounded-2xl border border-border/50 shadow-sm backdrop-blur-xl transition-all duration-300 ease-out",
+            "hover:scale-105 hover:shadow-md hover:border-border active:scale-95",
             showSaved
-              ? "bg-primary text-primary-foreground"
-              : "bg-background/80 text-muted-foreground hover:text-foreground"
+              ? "bg-primary text-primary-foreground border-primary shadow-primary/20"
+              : "bg-background/90 text-foreground"
           )}
         >
-          <Heart className="h-5 w-5" />
+          <Heart className={cn(
+            "h-5 w-5 transition-all duration-300",
+            showSaved ? "fill-current" : "group-hover:scale-110"
+          )} />
+          {savedPalettes.length > 0 && (
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
+              {savedPalettes.length > 9 ? "9+" : savedPalettes.length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setShowSettings(true)}
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-full backdrop-blur-xl transition-all",
+            "group flex h-11 w-11 items-center justify-center rounded-2xl border border-border/50 shadow-sm backdrop-blur-xl transition-all duration-300 ease-out",
+            "hover:scale-105 hover:shadow-md hover:border-border active:scale-95",
             showSettings
-              ? "bg-primary text-primary-foreground"
-              : "bg-background/80 text-muted-foreground hover:text-foreground"
+              ? "bg-primary text-primary-foreground border-primary shadow-primary/20"
+              : "bg-background/90 text-foreground"
           )}
         >
-          <Settings className="h-5 w-5" />
+          <Settings className={cn(
+            "h-5 w-5 transition-all duration-300",
+            showSettings ? "rotate-90" : "group-hover:rotate-45"
+          )} />
         </button>
       </div>
 
@@ -384,7 +397,7 @@ function HomeContent() {
 
               {/* App Info */}
               <div className="text-center">
-                <p className="text-sm font-medium text-foreground">Paletta</p>
+                <p className="text-sm font-medium text-foreground">pal</p>
                 <p className="text-xs text-muted-foreground">Version 1.0.0</p>
               </div>
             </div>

@@ -33,7 +33,7 @@ export default function SignUpPage() {
               <Palette className="h-8 w-8 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-bold text-foreground">Create account</h1>
-            <p className="mt-2 text-muted-foreground">Join Paletta and sync across devices</p>
+            <p className="mt-2 text-muted-foreground">Join pal and sync across devices</p>
           </div>
 
           {/* Error Message */}

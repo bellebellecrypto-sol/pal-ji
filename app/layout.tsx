@@ -12,15 +12,15 @@ const _inconsolata = V0_Font_Inconsolata({ subsets: ['latin'], weight: ["200","3
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Paletta - Color Palette Generator",
+  title: "pal - Color Palette Generator",
   description:
     "Generate beautiful aesthetic color palettes for branding, UI design, interior design, and more",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Paletta",
+    title: "pal",
   },
-  applicationName: "Paletta",
+  applicationName: "pal",
   icons: {
     icon: [
       {
