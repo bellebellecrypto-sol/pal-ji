@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.paletta.app",
-  appName: "Paletta",
+  appId: "com.pal.app",
+  appName: "pal",
   webDir: "out",
   server: {
     androidScheme: "https",
@@ -31,7 +31,7 @@ const config: CapacitorConfig = {
   ios: {
     contentInset: "automatic",
     preferredContentMode: "mobile",
-    scheme: "Paletta",
+    scheme: "pal",
   },
 };
 

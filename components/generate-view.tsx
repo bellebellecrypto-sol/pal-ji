@@ -40,7 +40,7 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
 
   return (
     <div className="min-h-screen pb-28">
-      <IosHeader title="Paletta" subtitle="Generate beautiful palettes" />
+      <IosHeader title="pal" subtitle="Generate beautiful palettes" />
 
       <main className="mx-auto max-w-lg px-6 pt-24">
         <section className="mb-8">
