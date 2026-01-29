@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sparkles, Palette, Eye, ImageIcon, ArrowRight } from "lucide-react";
-import { useHaptics } from "@/hooks/use-native";
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -38,20 +37,16 @@ const slides = [
 
 export function Onboarding({ onComplete }: OnboardingProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { impact, selection } = useHaptics();
 
-  const handleNext = async () => {
-    await selection();
+  const handleNext = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      await impact("medium");
       onComplete();
     }
   };
 
-  const handleSkip = async () => {
-    await impact("light");
+  const handleSkip = () => {
     onComplete();
   };
 

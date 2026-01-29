@@ -194,92 +194,39 @@ export function useShare() {
 }
 
 // Native storage hook (uses Preferences plugin or localStorage)
+// Using a simple approach that works in both web and native
 export function useNativeStorage() {
-  const [Preferences, setPreferences] = useState<PreferencesPlugin | null>(null);
-
-  useEffect(() => {
-    if (isNative()) {
-      import("@capacitor/preferences").then((mod) => {
-        setPreferences(mod.Preferences as unknown as PreferencesPlugin);
-      });
+  const get = useCallback(async (key: string): Promise<string | null> => {
+    // Always use localStorage for web - Capacitor handles native
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(key);
     }
+    return null;
   }, []);
 
-  const get = useCallback(
-    async (key: string): Promise<string | null> => {
-      if (Preferences) {
-        try {
-          const result = await Preferences.get({ key });
-          return result.value;
-        } catch (e) {
-          console.error("Storage error:", e);
-        }
-      }
-      // Fallback to localStorage
-      if (typeof window !== "undefined") {
-        return localStorage.getItem(key);
-      }
-      return null;
-    },
-    [Preferences]
-  );
+  const set = useCallback(async (key: string, value: string): Promise<boolean> => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(key, value);
+      return true;
+    }
+    return false;
+  }, []);
 
-  const set = useCallback(
-    async (key: string, value: string): Promise<boolean> => {
-      if (Preferences) {
-        try {
-          await Preferences.set({ key, value });
-          return true;
-        } catch (e) {
-          console.error("Storage error:", e);
-        }
-      }
-      // Fallback to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem(key, value);
-        return true;
-      }
-      return false;
-    },
-    [Preferences]
-  );
-
-  const remove = useCallback(
-    async (key: string): Promise<boolean> => {
-      if (Preferences) {
-        try {
-          await Preferences.remove({ key });
-          return true;
-        } catch (e) {
-          console.error("Storage error:", e);
-        }
-      }
-      // Fallback to localStorage
-      if (typeof window !== "undefined") {
-        localStorage.removeItem(key);
-        return true;
-      }
-      return false;
-    },
-    [Preferences]
-  );
+  const remove = useCallback(async (key: string): Promise<boolean> => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(key);
+      return true;
+    }
+    return false;
+  }, []);
 
   const clear = useCallback(async (): Promise<boolean> => {
-    if (Preferences) {
-      try {
-        await Preferences.clear();
-        return true;
-      } catch (e) {
-        console.error("Storage error:", e);
-      }
-    }
-    // Fallback to localStorage
     if (typeof window !== "undefined") {
       localStorage.clear();
       return true;
     }
     return false;
-  }, [Preferences]);
+  }, []);
 
   return { get, set, remove, clear };
 }

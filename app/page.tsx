@@ -10,8 +10,6 @@ import { GradientView } from "@/components/gradient-view";
 import { ContrastChecker } from "@/components/contrast-checker";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
-import { Settings, Heart, Search, X, User, Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/toast";
 import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
@@ -65,14 +63,15 @@ function HomeContent() {
       }
     };
     loadData();
-  }, [storage]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Save local palettes when changed (only if not logged in)
   useEffect(() => {
     if (!isLocalLoading && !user) {
       storage.set("paletta-saved", JSON.stringify(localPalettes));
     }
-  }, [localPalettes, storage, isLocalLoading, user]);
+  }, [localPalettes, isLocalLoading, user]);
 
   // Sync local to cloud when user logs in
   useEffect(() => {
@@ -87,7 +86,7 @@ function HomeContent() {
       };
       syncPalettes();
     }
-  }, [user, isCloudLoading]);
+  }, [user, isCloudLoading, localPalettes]);
 
   const handleSavePalette = async (palette: Palette) => {
     if (user) {
