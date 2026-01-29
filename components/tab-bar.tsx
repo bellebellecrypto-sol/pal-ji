@@ -4,11 +4,10 @@ import { cn } from "@/lib/utils";
 import {
   Palette,
   Sparkles,
-  Heart,
-  Settings,
   Eye,
   Blend,
   ImageIcon,
+  Contrast,
 } from "lucide-react";
 import { useHaptics } from "@/hooks/use-native";
 
@@ -18,8 +17,7 @@ type Tab =
   | "visualizer"
   | "gradient"
   | "extract"
-  | "saved"
-  | "settings";
+  | "contrast";
 
 interface TabBarProps {
   activeTab: Tab;
@@ -31,7 +29,7 @@ const tabs: { id: Tab; label: string; icon: typeof Palette }[] = [
   { id: "explore", label: "Explore", icon: Palette },
   { id: "visualizer", label: "Preview", icon: Eye },
   { id: "gradient", label: "Gradient", icon: Blend },
-  { id: "extract", label: "Extract", icon: ImageIcon },
+  { id: "contrast", label: "Contrast", icon: Contrast },
 ];
 
 export function TabBar({ activeTab, onTabChange }: TabBarProps) {
