@@ -2,6 +2,14 @@ import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Inter as V0_Font_Inter, Roboto as V0_Font_Roboto, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
+import { Syne as V0_Font_Syne, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
+import { Play as V0_Font_Play, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
+import { DM_Sans as V0_Font_DM_Sans, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
+
+// Initialize fonts
+const _dmSans = V0_Font_DM_Sans({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700","800","900","1000"] })
+const _inconsolata = V0_Font_Inconsolata({ subsets: ['latin'], weight: ["200","300","400","500","600","700","800","900"] })
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
