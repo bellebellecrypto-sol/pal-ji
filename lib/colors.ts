@@ -15,20 +15,16 @@ export type UseCase =
   | "ui-design"
   | "interior"
   | "fashion"
-  | "nature"
-  | "minimal"
-  | "vibrant"
-  | "pastel";
+  | "digital-art"
+  | "photography";
 
-export const useCases: { id: UseCase; name: string; icon: string; description: string }[] = [
-  { id: "branding", name: "Branding", icon: "✦", description: "Corporate & brand identity" },
-  { id: "ui-design", name: "UI Design", icon: "◐", description: "Apps & digital products" },
-  { id: "interior", name: "Interior", icon: "⬡", description: "Home & space design" },
-  { id: "fashion", name: "Fashion", icon: "◇", description: "Clothing & accessories" },
-  { id: "nature", name: "Nature", icon: "❋", description: "Earth-inspired tones" },
-  { id: "minimal", name: "Minimal", icon: "○", description: "Clean & sophisticated" },
-  { id: "vibrant", name: "Vibrant", icon: "◉", description: "Bold & energetic" },
-  { id: "pastel", name: "Pastel", icon: "◌", description: "Soft & dreamy" },
+export const useCases: { id: UseCase; name: string; icon: string; description: string; gradient: [string, string] }[] = [
+  { id: "branding", name: "Branding", icon: "✦", description: "Corporate identity", gradient: ["#6366F1", "#8B5CF6"] },
+  { id: "ui-design", name: "UI Design", icon: "◐", description: "Apps & interfaces", gradient: ["#06B6D4", "#3B82F6"] },
+  { id: "interior", name: "Interiors", icon: "⬡", description: "Spaces & decor", gradient: ["#D97706", "#F59E0B"] },
+  { id: "fashion", name: "Fashion", icon: "◇", description: "Style & apparel", gradient: ["#EC4899", "#F472B6"] },
+  { id: "digital-art", name: "Digital Art", icon: "◈", description: "Creative & NFTs", gradient: ["#8B5CF6", "#D946EF"] },
+  { id: "photography", name: "Photography", icon: "◉", description: "Editing & filters", gradient: ["#10B981", "#34D399"] },
 ];
 
 const colorNames: Record<string, string[]> = {
@@ -158,10 +154,15 @@ export function generatePalette(useCase: UseCase): Palette {
       saturationRange = [75, 100];
       lightnessRange = [45, 60];
       break;
-    case "pastel":
+    case "digital-art":
+      harmony = Math.random() > 0.5 ? "triadic" : "split-complementary";
+      saturationRange = [65, 95];
+      lightnessRange = [40, 65];
+      break;
+    case "photography":
       harmony = "analogous";
-      saturationRange = [40, 70];
-      lightnessRange = [75, 90];
+      saturationRange = [35, 65];
+      lightnessRange = [35, 75];
       break;
     default:
       harmony = "analogous";
