@@ -2,20 +2,20 @@
 @import 'tw-animate-css';
 
 :root {
-  --background: oklch(0.98 0.002 250);
+  --background: rgb(246, 246, 253);
   --foreground: oklch(0.12 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.12 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.12 0 0);
-  --primary: oklch(0.12 0 0);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.96 0.005 250);
+  --primary: rgb(223, 226, 241);
+  --primary-foreground: rgb(0, 6, 73);
+  --secondary: rgb(251, 255, 218);
   --secondary-foreground: oklch(0.12 0 0);
   --muted: oklch(0.94 0.005 250);
   --muted-foreground: oklch(0.4 0 0);
-  --accent: oklch(0.55 0.2 250);
-  --accent-foreground: oklch(1 0 0);
+  --accent: rgb(181, 190, 231);
+  --accent-foreground: rgb(32, 43, 165);
   --destructive: oklch(0.55 0.22 25);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.92 0.005 250);
@@ -38,8 +38,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  --font-sans: 'DM Sans', 'DM Sans Fallback';
+  --font-mono: 'Inconsolata', 'Inconsolata Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
