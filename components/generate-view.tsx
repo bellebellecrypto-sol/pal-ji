@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { generatePalette, type Palette, type UseCase } from "@/lib/colors";
 import { UseCaseSelector } from "./use-case-selector";
-import { PaletteCard } from "./palette-card";
+import { EditablePalette } from "./editable-palette";
 import { IosHeader } from "./ios-header";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
@@ -32,6 +32,10 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
 
   const isPaletteSaved = (palette: Palette) => {
     return savedPalettes.some((p) => p.id === palette.id);
+  };
+
+  const handlePaletteChange = (updatedPalette: Palette) => {
+    setCurrentPalette(updatedPalette);
   };
 
   return (
@@ -64,9 +68,11 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Your Palette
             </h2>
-            <PaletteCard
+            <EditablePalette
               palette={currentPalette}
+              useCase={selectedUseCase}
               onSave={onSave}
+              onPaletteChange={handlePaletteChange}
               isSaved={isPaletteSaved(currentPalette)}
             />
           </section>

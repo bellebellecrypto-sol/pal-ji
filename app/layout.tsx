@@ -2,10 +2,8 @@ import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Inter as V0_Font_Inter, Roboto as V0_Font_Roboto, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
-import { Syne as V0_Font_Syne, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
-import { Play as V0_Font_Play, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
 import { DM_Sans as V0_Font_DM_Sans, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
+import { AuthProvider } from "@/contexts/auth-context";
 
 // Initialize fonts
 const _dmSans = V0_Font_DM_Sans({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700","800","900","1000"] })
@@ -55,7 +53,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="font-sans antialiased overscroll-none">{children}</body>
+      <body className="font-sans antialiased overscroll-none">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }
