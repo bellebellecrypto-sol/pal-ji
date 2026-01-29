@@ -10,6 +10,8 @@ import { GradientView } from "@/components/gradient-view";
 import { ContrastChecker } from "@/components/contrast-checker";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
+import { Settings, Heart, Search, X, User, Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/toast";
 import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
