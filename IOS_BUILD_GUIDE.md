@@ -24,52 +24,52 @@ Paletta is a comprehensive color palette app with features similar to Coolors.co
 
 ## Step 1: Clone and Install Dependencies
 
-```bash
+\`\`\`bash
 # Clone the repository
 git clone <your-repo-url>
 cd paletta
 
 # Install dependencies
 npm install
-```
+\`\`\`
 
 ## Step 2: Initialize Capacitor
 
-```bash
+\`\`\`bash
 # Initialize Capacitor (first time only)
 npx cap init Paletta com.paletta.app --web-dir=out
 
 # Add iOS platform
 npx cap add ios
-```
+\`\`\`
 
 ## Step 3: Build the Web App
 
-```bash
+\`\`\`bash
 # Build the Next.js app for static export
 npm run build
-```
+\`\`\`
 
 This creates the `out/` directory with your static app.
 
 ## Step 4: Sync with iOS
 
-```bash
+\`\`\`bash
 # Sync web assets to iOS project
 npx cap sync ios
-```
+\`\`\`
 
 ## Step 5: Open in Xcode
 
-```bash
+\`\`\`bash
 # Open the iOS project in Xcode
 npx cap open ios
-```
+\`\`\`
 
 Or run the combined command:
-```bash
+\`\`\`bash
 npm run build:ios
-```
+\`\`\`
 
 ## Step 6: Configure Xcode Project
 
@@ -157,20 +157,20 @@ The app uses these native Capacitor plugins:
 ## Troubleshooting
 
 ### Build Errors
-```bash
+\`\`\`bash
 # Clean and rebuild
 rm -rf out .next
 npm run build
 npx cap sync ios
-```
+\`\`\`
 
 ### Pod Issues
-```bash
+\`\`\`bash
 cd ios/App
 pod deintegrate
 pod install
 cd ../..
-```
+\`\`\`
 
 ### Signing Issues
 - Ensure your Apple Developer account is active
@@ -181,14 +181,14 @@ cd ../..
 
 To update your app after changes:
 
-```bash
+\`\`\`bash
 # Build and sync
 npm run build
 npx cap sync ios
 
 # Open Xcode and archive
 npx cap open ios
-```
+\`\`\`
 
 Then create a new archive and upload to App Store Connect.
 
