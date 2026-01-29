@@ -57,11 +57,11 @@ export function Onboarding({ onComplete }: OnboardingProps) {
   return (
     <div className="fixed inset-0 z-[200] flex flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 pt-safe">
+      <div className="flex items-center justify-between px-5 py-4 pt-safe">
         <span className="text-xl font-bold tracking-tight text-foreground">pal</span>
         <button
           onClick={handleSkip}
-          className="group flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
+          className="group flex items-center gap-0.5 rounded-xl px-3 py-1.5 text-[13px] font-medium text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground"
         >
           Skip
           <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -72,51 +72,48 @@ export function Onboarding({ onComplete }: OnboardingProps) {
       <div className="flex flex-1 flex-col items-center justify-center px-8">
         {/* Icon with animated background */}
         <div 
-          className="mb-8 flex h-24 w-24 items-center justify-center rounded-3xl shadow-lg transition-all duration-500"
-          style={{ backgroundColor: `${slide.colors[2]}15` }}
+          className="mb-8 flex h-20 w-20 items-center justify-center rounded-2xl shadow-md transition-all duration-500"
+          style={{ backgroundColor: `${slide.colors[2]}12` }}
         >
           <Icon 
-            className="h-12 w-12 transition-all duration-500" 
+            className="h-10 w-10 transition-all duration-500" 
             style={{ color: slide.colors[2] }} 
           />
         </div>
 
         {/* Color Preview with enhanced styling */}
-        <div className="mb-10 flex h-20 w-full max-w-xs overflow-hidden rounded-3xl shadow-xl ring-1 ring-border/10">
+        <div className="mb-10 flex h-16 w-full max-w-[280px] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5">
           {slide.colors.map((color, i) => (
             <div
               key={i}
               className="flex-1 transition-all duration-700 ease-out"
-              style={{ 
-                backgroundColor: color,
-                transform: `scaleY(${1 + (i === 2 ? 0.05 : 0)})`
-              }}
+              style={{ backgroundColor: color }}
             />
           ))}
         </div>
 
         {/* Text with improved typography */}
-        <h1 className="mb-3 text-center text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="mb-2 text-center text-xl font-bold tracking-tight text-foreground">
           {slide.title}
         </h1>
-        <p className="max-w-sm text-center text-base leading-relaxed text-muted-foreground">
+        <p className="max-w-[300px] text-center text-[15px] leading-relaxed text-muted-foreground">
           {slide.description}
         </p>
       </div>
 
       {/* Bottom section */}
-      <div className="p-8 pb-safe">
+      <div className="px-6 pb-8 pb-safe">
         {/* Progress dots with enhanced interaction */}
-        <div className="mb-6 flex items-center justify-center gap-2.5">
+        <div className="mb-5 flex items-center justify-center gap-2">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
               className={cn(
-                "h-2 rounded-full transition-all duration-300 ease-out",
+                "h-1.5 rounded-full transition-all duration-300 ease-out",
                 i === currentSlide 
-                  ? "w-10 bg-foreground" 
-                  : "w-2 bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                  ? "w-8 bg-primary" 
+                  : "w-1.5 bg-border hover:bg-muted-foreground/30"
               )}
             />
           ))}
@@ -125,10 +122,10 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         {/* Next button with premium feel */}
         <button
           onClick={handleNext}
-          className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-4 text-base font-semibold text-background shadow-lg transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
+          className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-[15px] font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
         >
           {isLastSlide ? "Get Started" : "Continue"}
-          <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+          <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
         </button>
       </div>
     </div>

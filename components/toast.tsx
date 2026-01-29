@@ -34,10 +34,10 @@ const toastIcons: Record<ToastType, ReactNode> = {
 };
 
 const toastStyles: Record<ToastType, string> = {
-  success: "bg-emerald-500 text-white",
-  error: "bg-red-500 text-white",
-  warning: "bg-amber-500 text-white",
-  info: "bg-blue-500 text-white",
+  success: "bg-emerald-500 text-white shadow-emerald-500/25",
+  error: "bg-rose-500 text-white shadow-rose-500/25",
+  warning: "bg-amber-500 text-white shadow-amber-500/25",
+  info: "bg-sky-500 text-white shadow-sky-500/25",
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -61,23 +61,23 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       
       {/* Toast Container */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-[100] flex flex-col items-center gap-2 px-4 pt-safe">
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[100] flex flex-col items-center px-4 pt-safe">
         <div className="mt-4 flex flex-col items-center gap-2">
           {toasts.map((toast) => (
             <div
               key={toast.id}
               onClick={() => dismissToast(toast.id)}
               className={cn(
-                "pointer-events-auto flex items-center gap-2 rounded-full px-4 py-2.5 shadow-lg",
+                "pointer-events-auto flex items-center gap-2.5 rounded-2xl px-4 py-3 shadow-lg",
                 "animate-in fade-in slide-in-from-top-4 duration-300",
-                "cursor-pointer transition-transform active:scale-95",
+                "cursor-pointer transition-all duration-200 active:scale-95",
                 toastStyles[toast.type]
               )}
             >
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+              <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-white/20">
                 {toastIcons[toast.type]}
               </span>
-              <span className="text-sm font-medium">{toast.message}</span>
+              <span className="text-[13px] font-semibold">{toast.message}</span>
             </div>
           ))}
         </div>

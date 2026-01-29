@@ -41,35 +41,26 @@ export function PaletteCard({ palette, onSave, isSaved = false }: PaletteCardPro
   };
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-card shadow-lg transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98]">
-      <div className="flex h-48">
+    <div className="overflow-hidden rounded-3xl bg-card shadow-md ring-1 ring-border/50 transition-all duration-200 hover:shadow-lg active:scale-[0.99]">
+      <div className="flex h-40">
         {palette.colors.map((color, index) => (
           <button
             key={index}
             onClick={() => copyToClipboard(color.hex, index)}
-            className="relative flex-1 transition-all duration-200 hover:flex-[1.3] active:flex-[1.2]"
+            className="relative flex-1 transition-all duration-200 ease-out hover:flex-[1.2] active:flex-[1.15]"
             style={{ backgroundColor: color.hex }}
           >
             <div
               className={cn(
-                "absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200",
-                copiedIndex === index && "opacity-100"
+                "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+                copiedIndex === index ? "opacity-100" : "opacity-0"
               )}
               style={{ color: getContrastColor(color.hex) }}
             >
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col items-center gap-0.5">
                 <Check className="h-5 w-5" />
-                <span className="text-xs font-medium">Copied!</span>
+                <span className="text-[10px] font-semibold">Copied</span>
               </div>
-            </div>
-            <div
-              className={cn(
-                "absolute bottom-3 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-200 group-hover:opacity-100",
-                "hover:opacity-100"
-              )}
-              style={{ color: getContrastColor(color.hex) }}
-            >
-              <Copy className="h-4 w-4" />
             </div>
           </button>
         ))}
@@ -77,30 +68,30 @@ export function PaletteCard({ palette, onSave, isSaved = false }: PaletteCardPro
 
       <div className="p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="font-semibold text-foreground">{palette.name}</h3>
+          <h3 className="text-sm font-semibold text-foreground">{palette.name}</h3>
           <button
             onClick={handleLike}
             className={cn(
-              "rounded-full p-2 transition-all duration-200 active:scale-90",
-              liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"
+              "rounded-xl p-2 transition-all duration-200 active:scale-90",
+              liked ? "text-rose-500" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
             )}
           >
-            <Heart className={cn("h-5 w-5", liked && "fill-current")} />
+            <Heart className={cn("h-[18px] w-[18px]", liked && "fill-current")} />
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {palette.colors.map((color, index) => (
             <button
               key={index}
               onClick={() => copyToClipboard(color.hex, index)}
-              className="flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-muted"
+              className="flex items-center gap-1.5 rounded-lg bg-secondary/70 px-2 py-1 text-[11px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-secondary"
             >
               <span
-                className="h-3 w-3 rounded-full border border-border"
+                className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10"
                 style={{ backgroundColor: color.hex }}
               />
-              <span className="uppercase">{color.hex.replace("#", "")}</span>
+              <span className="font-mono uppercase">{color.hex.replace("#", "")}</span>
             </button>
           ))}
         </div>
