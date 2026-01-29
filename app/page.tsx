@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { TabBar, type Tab } from "@/components/tab-bar";
 import { GenerateView } from "@/components/generate-view";
 import { ExploreView } from "@/components/explore-view";
@@ -9,16 +10,18 @@ import { GradientView } from "@/components/gradient-view";
 import { ContrastChecker } from "@/components/contrast-checker";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
-import { Settings, Heart, Search, X } from "lucide-react";
+import { Settings, Heart, Search, X, User, Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/toast";
 import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
+import { useAuth } from "@/contexts/auth-context";
+import { usePaletteSync } from "@/hooks/use-palette-sync";
 
 function HomeContent() {
   const [activeTab, setActiveTab] = useState<Tab>("generate");
-  const [savedPalettes, setSavedPalettes] = useState<Palette[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [localPalettes, setLocalPalettes] = useState<Palette[]>([]);
+  const [isLocalLoading, setIsLocalLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -26,14 +29,28 @@ function HomeContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const storage = useNativeStorage();
   const { showToast } = useToast();
+  const { user, signOut, isLoading: isAuthLoading } = useAuth();
+  const { 
+    palettes: cloudPalettes, 
+    isLoading: isCloudLoading, 
+    isSyncing, 
+    savePalette: saveToCloud, 
+    deletePalette: deleteFromCloud,
+    syncLocalToCloud,
+    refresh: refreshCloud
+  } = usePaletteSync();
 
-  // Load saved data on mount
+  // Use cloud palettes if logged in, otherwise use local
+  const savedPalettes = user ? cloudPalettes : localPalettes;
+  const isLoading = user ? (isAuthLoading || isCloudLoading) : isLocalLoading;
+
+  // Load local data on mount
   useEffect(() => {
     const loadData = async () => {
       try {
         const stored = await storage.get("paletta-saved");
         if (stored) {
-          setSavedPalettes(JSON.parse(stored));
+          setLocalPalettes(JSON.parse(stored));
         }
         
         // Check if onboarding was completed
@@ -44,32 +61,60 @@ function HomeContent() {
       } catch {
         // Handle error silently
       } finally {
-        setIsLoading(false);
+        setIsLocalLoading(false);
       }
     };
     loadData();
   }, [storage]);
 
-  // Save palettes when changed
+  // Save local palettes when changed (only if not logged in)
   useEffect(() => {
-    if (!isLoading) {
-      storage.set("paletta-saved", JSON.stringify(savedPalettes));
+    if (!isLocalLoading && !user) {
+      storage.set("paletta-saved", JSON.stringify(localPalettes));
     }
-  }, [savedPalettes, storage, isLoading]);
+  }, [localPalettes, storage, isLocalLoading, user]);
 
-  const handleSavePalette = (palette: Palette) => {
-    setSavedPalettes((prev) => {
-      const exists = prev.some((p) => p.id === palette.id);
-      if (exists) {
-        return prev.filter((p) => p.id !== palette.id);
+  // Sync local to cloud when user logs in
+  useEffect(() => {
+    if (user && localPalettes.length > 0 && !isCloudLoading) {
+      const syncPalettes = async () => {
+        const count = await syncLocalToCloud(localPalettes);
+        if (count > 0) {
+          showToast(`Synced ${count} palettes to cloud`, "success");
+          setLocalPalettes([]); // Clear local after sync
+          storage.set("paletta-saved", "[]");
+        }
+      };
+      syncPalettes();
+    }
+  }, [user, isCloudLoading]);
+
+  const handleSavePalette = async (palette: Palette) => {
+    if (user) {
+      // Cloud save
+      const isSaved = cloudPalettes.some((p) => p.id === palette.id);
+      if (isSaved) {
+        await deleteFromCloud(palette.id);
+        showToast("Removed from cloud", "info");
+      } else {
+        await saveToCloud(palette);
+        showToast("Saved to cloud", "success");
       }
-      return [...prev, palette];
-    });
+    } else {
+      // Local save
+      setLocalPalettes((prev) => {
+        const exists = prev.some((p) => p.id === palette.id);
+        if (exists) {
+          return prev.filter((p) => p.id !== palette.id);
+        }
+        return [...prev, palette];
+      });
+    }
   };
 
   const handleClearSaved = () => {
     if (confirm("Are you sure you want to clear all saved palettes?")) {
-      setSavedPalettes([]);
+      setLocalPalettes([]); // Updated line
     }
   };
 
@@ -89,8 +134,12 @@ function HomeContent() {
     setShowOnboarding(false);
   };
 
-  const handleDeletePalette = (palette: Palette) => {
-    setSavedPalettes((prev) => prev.filter((p) => p.id !== palette.id));
+  const handleDeletePalette = async (palette: Palette) => {
+    if (user) {
+      await deleteFromCloud(palette.id);
+    } else {
+      setLocalPalettes((prev) => prev.filter((p) => p.id !== palette.id));
+    }
     showToast("Palette removed", "info");
   };
 
@@ -255,8 +304,71 @@ function HomeContent() {
               </button>
             </div>
             <div className="p-4">
-              {/* Actions */}
-              <div>
+              {/* Account Section */}
+              <div className="mb-6">
+                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  Account
+                </h3>
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 rounded-xl bg-card p-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground">{user.user_metadata?.display_name || "User"}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
+                      <div className="flex items-center gap-1 text-green-600">
+                        <Cloud className="h-4 w-4" />
+                        <span className="text-xs">Synced</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={refreshCloud}
+                      disabled={isSyncing}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-card py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <RefreshCw className={cn("h-4 w-4", isSyncing && "animate-spin")} />
+                      {isSyncing ? "Syncing..." : "Refresh Palettes"}
+                    </button>
+                    <button
+                      onClick={signOut}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-card py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 rounded-xl bg-card p-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                        <CloudOff className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-foreground">Local Storage</p>
+                        <p className="text-sm text-muted-foreground">Sign in to sync across devices</p>
+                      </div>
+                    </div>
+                    <Link
+                      href="/auth/login"
+                      className="block w-full rounded-xl bg-primary py-3 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      href="/auth/sign-up"
+                      className="block w-full rounded-xl bg-card py-3 text-center text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      Create Account
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Data Section */}
+              <div className="mb-6">
                 <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                   Data
                 </h3>
@@ -270,7 +382,7 @@ function HomeContent() {
               </div>
 
               {/* App Info */}
-              <div className="mt-8 text-center">
+              <div className="text-center">
                 <p className="text-sm font-medium text-foreground">Paletta</p>
                 <p className="text-xs text-muted-foreground">Version 1.0.0</p>
               </div>
