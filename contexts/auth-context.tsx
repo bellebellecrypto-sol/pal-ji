@@ -8,7 +8,6 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  isInIframe: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -16,7 +15,6 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
   isLoading: true,
-  isInIframe: false,
   signOut: async () => {},
 });
 
@@ -24,20 +22,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isInIframe, setIsInIframe] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    // Detect if running in iframe
-    const inIframe = typeof window !== "undefined" && window.self !== window.top;
-    setIsInIframe(inIframe);
-    
-    // Skip auth in iframe to avoid cookie issues
-    if (inIframe) {
-      setIsLoading(false);
-      return;
-    }
-
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -64,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, isInIframe, signOut }}>
+    <AuthContext.Provider value={{ user, session, isLoading, signOut }}>
       {children}
     </AuthContext.Provider>
   );
