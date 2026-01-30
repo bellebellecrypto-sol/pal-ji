@@ -15,7 +15,8 @@ import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
 import { useAuth } from "@/contexts/auth-context";
 import { usePaletteSync } from "@/hooks/use-palette-sync";
-import { ArrowRight } from "lucide-react"; // Import ArrowRight
+import { ArrowRight, Heart, Settings, X, Search, User, Cloud, CloudOff, RefreshCw, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function HomeContent() {
   const [activeTab, setActiveTab] = useState<Tab>("generate");
