@@ -2,6 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function updateSession(request: NextRequest) {
+  // Skip auth checks for v0 preview iframe - check for sec-fetch-dest header
+  const secFetchDest = request.headers.get("sec-fetch-dest");
+  const isIframe = secFetchDest === "iframe";
+  
+  // Also check for common preview/development indicators
+  const referer = request.headers.get("referer") || "";
+  const isV0Preview = referer.includes("v0.dev") || referer.includes("vercel.app");
+  
+  if (isIframe || isV0Preview) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
