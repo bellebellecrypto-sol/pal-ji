@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils"
+
 import { useState } from "react";
 import { generatePalette, type Palette, type UseCase } from "@/lib/colors";
 import { UseCaseSelector } from "./use-case-selector";
@@ -42,30 +44,30 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
     <div className="min-h-screen pb-28">
       <IosHeader title="pal" subtitle="Generate beautiful palettes" />
 
-      <main className="mx-auto max-w-lg px-6 pt-24">
-        <section className="mb-8">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Choose Use Case
+      <main className="mx-auto max-w-lg px-5 pt-24">
+        <section className="mb-6">
+          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            Choose Category
           </h2>
           <UseCaseSelector selectedUseCase={selectedUseCase} onSelect={setSelectedUseCase} />
         </section>
 
-        <section className="mb-8">
+        <section className="mb-6">
           <Button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full rounded-2xl py-6 text-base font-semibold shadow-lg transition-all duration-300 hover:shadow-xl active:scale-[0.98]"
+            className="w-full rounded-2xl py-5 text-[15px] font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
           >
             <RefreshCw
-              className={`mr-2 h-5 w-5 ${isGenerating ? "animate-spin" : ""}`}
+              className={cn("mr-2 h-5 w-5", isGenerating && "animate-spin")}
             />
             {isGenerating ? "Generating..." : "Generate Palette"}
           </Button>
         </section>
 
         {currentPalette && (
-          <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          <section className="animate-fade-up">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
               Your Palette
             </h2>
             <EditablePalette
@@ -80,10 +82,23 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
 
         {!currentPalette && (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 text-6xl opacity-20">✦</div>
-            <p className="text-muted-foreground">
-              Select a use case and tap Generate to create your palette
+            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5">
+              <span className="text-5xl text-primary/50">✦</span>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-foreground">Ready to create?</h3>
+            <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-muted-foreground">
+              Choose a category above, then tap Generate to create your perfect color palette
             </p>
+            <div className="flex items-center gap-2 rounded-full bg-secondary/50 px-4 py-2 text-xs text-muted-foreground">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">1</span>
+              <span>Pick category</span>
+              <span className="text-border">→</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">2</span>
+              <span>Generate</span>
+              <span className="text-border">→</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">3</span>
+              <span>Save</span>
+            </div>
           </div>
         )}
       </main>

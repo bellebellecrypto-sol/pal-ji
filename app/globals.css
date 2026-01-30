@@ -2,39 +2,39 @@
 @import 'tw-animate-css';
 
 :root {
-  --background: rgb(242, 243, 247);
-  --foreground: rgb(0, 7, 69);
-  --card: rgb(249, 250, 255);
-  --card-foreground: rgb(0, 7, 69);
-  --popover: rgb(250, 251, 255);
-  --popover-foreground: rgb(0, 7, 69);
-  --primary: rgb(193, 207, 255);
-  --primary-foreground: rgb(0, 7, 68);
-  --secondary: rgb(200, 201, 219);
-  --secondary-foreground: rgb(0, 7, 68);
-  --muted: rgb(250, 251, 255);
-  --muted-foreground: rgb(117, 117, 117);
-  --accent: rgb(233, 251, 178);
-  --accent-foreground: rgb(0, 7, 68);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: rgb(242, 243, 247);
-  --border: oklch(0.92 0.005 250);
-  --input: oklch(0.94 0.005 250);
-  --ring: rgb(209, 215, 255);
+  --background: rgb(248, 249, 252);
+  --foreground: rgb(15, 23, 42);
+  --card: rgb(255, 255, 255);
+  --card-foreground: rgb(15, 23, 42);
+  --popover: rgb(255, 255, 255);
+  --popover-foreground: rgb(15, 23, 42);
+  --primary: rgb(99, 102, 241);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(241, 245, 249);
+  --secondary-foreground: rgb(51, 65, 85);
+  --muted: rgb(241, 245, 249);
+  --muted-foreground: rgb(100, 116, 139);
+  --accent: rgb(236, 254, 255);
+  --accent-foreground: rgb(15, 23, 42);
+  --destructive: rgb(239, 68, 68);
+  --destructive-foreground: rgb(255, 255, 255);
+  --border: rgb(226, 232, 240);
+  --input: rgb(241, 245, 249);
+  --ring: rgb(99, 102, 241);
   --chart-1: oklch(0.65 0.2 30);
   --chart-2: oklch(0.6 0.2 180);
   --chart-3: oklch(0.55 0.2 270);
   --chart-4: oklch(0.7 0.2 90);
   --chart-5: oklch(0.6 0.2 330);
   --radius: 1rem;
-  --sidebar: oklch(0.98 0 0);
-  --sidebar-foreground: rgb(0, 6, 74);
-  --sidebar-primary: rgb(0, 6, 74);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.96 0 0);
-  --sidebar-accent-foreground: rgb(0, 6, 73);
-  --sidebar-border: oklch(0.92 0 0);
-  --sidebar-ring: rgb(181, 190, 232);
+  --sidebar: rgb(255, 255, 255);
+  --sidebar-foreground: rgb(15, 23, 42);
+  --sidebar-primary: rgb(99, 102, 241);
+  --sidebar-primary-foreground: rgb(255, 255, 255);
+  --sidebar-accent: rgb(241, 245, 249);
+  --sidebar-accent-foreground: rgb(51, 65, 85);
+  --sidebar-border: rgb(226, 232, 240);
+  --sidebar-ring: rgb(99, 102, 241);
 }
 
 @theme inline {
@@ -189,6 +189,16 @@ input[type="range"]::-webkit-slider-thumb:active {
   100% { transform: scale(1); opacity: 1; }
 }
 
+@keyframes fade-up {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 .animate-subtle-bounce {
   animation: subtle-bounce 0.3s ease-out;
 }
@@ -201,22 +211,50 @@ input[type="range"]::-webkit-slider-thumb:active {
   animation: scale-in 0.2s ease-out;
 }
 
+.animate-fade-up {
+  animation: fade-up 0.4s ease-out;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
 /* Enhanced button interactions */
 button:not(:disabled) {
-  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background-color 0.2s ease-out;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.2s ease-out, 
+              background-color 0.2s ease-out,
+              border-color 0.2s ease-out;
 }
 
 /* Glass morphism effect */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Premium card shadow */
+.shadow-premium {
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.04),
+    0 8px 16px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-premium-lg {
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.06);
 }
 
 /* Smooth scrollbar for webkit */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -224,11 +262,19 @@ button:not(:disabled) {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
-  border-radius: 3px;
-  opacity: 0.3;
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  opacity: 0.5;
+  background: rgba(100, 116, 139, 0.5);
+}
+
+/* Focus ring styles */
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -18,35 +17,42 @@ export function IosHeader({ title, subtitle, rightAction }: IosHeaderProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
       className={cn(
-        "fixed left-0 right-0 top-0 z-50 pt-safe transition-all duration-300",
+        "fixed left-0 right-0 top-0 z-40 pt-safe transition-all duration-300 ease-out",
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border"
-          : "bg-transparent"
+          ? "bg-background/90 backdrop-blur-2xl border-b border-border/60 shadow-sm"
+          : "bg-gradient-to-b from-background via-background/80 to-transparent"
       )}
     >
       <div className="mx-auto max-w-lg px-6 py-4">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="min-w-0 flex-1">
             <h1
               className={cn(
-                "font-bold text-foreground transition-all duration-300",
+                "font-bold tracking-tight text-foreground transition-all duration-300 ease-out",
                 scrolled ? "text-lg" : "text-2xl"
               )}
             >
               {title}
             </h1>
-            {subtitle && !scrolled && (
-              <p className="mt-0.5 text-sm text-muted-foreground">{subtitle}</p>
-            )}
+            <p 
+              className={cn(
+                "text-sm text-muted-foreground transition-all duration-300 ease-out",
+                scrolled ? "h-0 opacity-0 mt-0" : "h-auto opacity-100 mt-0.5"
+              )}
+            >
+              {subtitle}
+            </p>
           </div>
-          {rightAction}
+          {rightAction && (
+            <div className="ml-4 flex-shrink-0">{rightAction}</div>
+          )}
         </div>
       </div>
     </header>

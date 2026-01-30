@@ -59,16 +59,16 @@ export function ExploreView({ onSave, savedPalettes }: ExploreViewProps) {
     <div className="min-h-screen pb-28">
       <IosHeader title="Explore" subtitle="Discover trending palettes" />
 
-      <main className="mx-auto max-w-lg px-6 pt-24">
-        <div className="-mx-6 mb-6 overflow-x-auto px-6">
+      <main className="mx-auto max-w-lg px-5 pt-24">
+        <div className="-mx-5 mb-5 overflow-x-auto px-5">
           <div className="flex gap-2 pb-2">
             <button
               onClick={() => handleCategoryChange("curated")}
               className={cn(
-                "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                "shrink-0 rounded-xl px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
                 selectedCategory === "curated"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-secondary/70 text-secondary-foreground hover:bg-secondary"
               )}
             >
               Curated
@@ -76,10 +76,10 @@ export function ExploreView({ onSave, savedPalettes }: ExploreViewProps) {
             <button
               onClick={() => handleCategoryChange("all")}
               className={cn(
-                "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                "shrink-0 rounded-xl px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
                 selectedCategory === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-secondary-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-secondary/70 text-secondary-foreground hover:bg-secondary"
               )}
             >
               All
@@ -89,10 +89,10 @@ export function ExploreView({ onSave, savedPalettes }: ExploreViewProps) {
                 key={useCase.id}
                 onClick={() => handleCategoryChange(useCase.id)}
                 className={cn(
-                  "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                  "shrink-0 rounded-xl px-3.5 py-2 text-[13px] font-medium transition-all duration-200",
                   selectedCategory === useCase.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-muted"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-secondary/70 text-secondary-foreground hover:bg-secondary"
                 )}
               >
                 {useCase.icon} {useCase.name}
@@ -101,7 +101,7 @@ export function ExploreView({ onSave, savedPalettes }: ExploreViewProps) {
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {palettes.map((palette) => (
             <PaletteCard
               key={palette.id}
@@ -113,9 +113,11 @@ export function ExploreView({ onSave, savedPalettes }: ExploreViewProps) {
         </div>
 
         {palettes.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mb-4 text-6xl opacity-20">◐</div>
-            <p className="text-muted-foreground">No palettes found in this category</p>
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-secondary/50">
+              <span className="text-3xl text-muted-foreground/40">◐</span>
+            </div>
+            <p className="text-sm text-muted-foreground">No palettes found in this category</p>
           </div>
         )}
       </main>

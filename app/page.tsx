@@ -7,16 +7,16 @@ import { GenerateView } from "@/components/generate-view";
 import { ExploreView } from "@/components/explore-view";
 import { VisualizerView } from "@/components/visualizer-view";
 import { GradientView } from "@/components/gradient-view";
-import { ContrastChecker } from "@/components/contrast-checker";
+import { SavedView } from "@/components/saved-view";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
-import { Settings, Heart, Search, X, User, Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/toast";
 import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
 import { useAuth } from "@/contexts/auth-context";
 import { usePaletteSync } from "@/hooks/use-palette-sync";
+import { Heart, Settings, X, Search, User, Cloud, CloudOff, RefreshCw, LogOut, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 function HomeContent() {
   const [activeTab, setActiveTab] = useState<Tab>("generate");
@@ -122,12 +122,15 @@ function HomeContent() {
   const selectPaletteForVisualizer = () => {
     if (savedPalettes.length > 0) {
       setShowSaved(true);
+    } else {
+      setActiveTab("saved");
     }
   };
 
   const handleSelectForVisualizer = (palette: Palette) => {
     setVisualizerPalette(palette);
     setShowSaved(false);
+    setActiveTab("visualizer");
   };
 
   const handleOnboardingComplete = async () => {
@@ -155,40 +158,20 @@ function HomeContent() {
       {/* Onboarding */}
       {showOnboarding && <Onboarding onComplete={handleOnboardingComplete} />}
       
-      {/* Top Action Buttons */}
-      <div className="fixed right-4 top-4 z-50 flex gap-3 pt-safe">
-        <button
-          onClick={() => setShowSaved(true)}
-          className={cn(
-            "group relative flex h-11 w-11 items-center justify-center rounded-2xl border border-border/50 shadow-sm backdrop-blur-xl transition-all duration-300 ease-out",
-            "hover:scale-105 hover:shadow-md hover:border-border active:scale-95",
-            showSaved
-              ? "bg-primary text-primary-foreground border-primary shadow-primary/20"
-              : "bg-background/90 text-foreground"
-          )}
-        >
-          <Heart className={cn(
-            "h-5 w-5 transition-all duration-300",
-            showSaved ? "fill-current" : "group-hover:scale-110"
-          )} />
-          {savedPalettes.length > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground shadow-sm">
-              {savedPalettes.length > 9 ? "9+" : savedPalettes.length}
-            </span>
-          )}
-        </button>
+      {/* Top Settings Button */}
+      <div className="fixed right-4 top-4 z-50 pt-safe">
         <button
           onClick={() => setShowSettings(true)}
           className={cn(
-            "group flex h-11 w-11 items-center justify-center rounded-2xl border border-border/50 shadow-sm backdrop-blur-xl transition-all duration-300 ease-out",
-            "hover:scale-105 hover:shadow-md hover:border-border active:scale-95",
+            "group flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-all duration-200 ease-out",
+            "active:scale-90",
             showSettings
-              ? "bg-primary text-primary-foreground border-primary shadow-primary/20"
-              : "bg-background/90 text-foreground"
+              ? "bg-primary text-primary-foreground shadow-md"
+              : "bg-card/95 text-foreground ring-1 ring-border/60 backdrop-blur-xl hover:bg-card hover:shadow-md"
           )}
         >
           <Settings className={cn(
-            "h-5 w-5 transition-all duration-300",
+            "h-[18px] w-[18px] transition-transform duration-200",
             showSettings ? "rotate-90" : "group-hover:rotate-45"
           )} />
         </button>
@@ -207,24 +190,36 @@ function HomeContent() {
           onSelectPalette={selectPaletteForVisualizer}
         />
       )}
-      {activeTab === "gradient" && <GradientView />}
-      {activeTab === "contrast" && <ContrastChecker savedPalettes={savedPalettes} />}
+      {activeTab === "gradient" && <GradientView savedPalettes={savedPalettes} />}
+      {activeTab === "saved" && (
+        <SavedView
+          savedPalettes={savedPalettes}
+          isLoading={isLoading}
+          onDelete={handleDeletePalette}
+          onSelectForVisualizer={handleSelectForVisualizer}
+        />
+      )}
 
       {/* Bottom Sheet: Saved Palettes */}
       {showSaved && (
         <div className="fixed inset-0 z-50">
           <div
-            className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-foreground/25 backdrop-blur-md transition-opacity"
             onClick={() => setShowSaved(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-background pb-safe">
+          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-[2rem] bg-background pb-safe shadow-2xl">
+            {/* Handle bar */}
+            <div className="flex justify-center py-3">
+              <div className="h-1 w-10 rounded-full bg-border" />
+            </div>
+            
             {/* Header */}
-            <div className="sticky top-0 z-10 border-b border-border bg-background p-4">
+            <div className="sticky top-0 z-10 border-b border-border/60 bg-background/95 px-5 pb-4 backdrop-blur-xl">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-foreground">Saved Palettes</h2>
+                <h2 className="text-lg font-bold tracking-tight text-foreground">Saved Palettes</h2>
                 <button
                   onClick={() => setShowSaved(false)}
-                  className="rounded-full bg-secondary p-2 text-secondary-foreground"
+                  className="rounded-xl bg-secondary/80 p-2 text-secondary-foreground transition-colors hover:bg-secondary"
                 >
                   <span className="sr-only">Close</span>
                   <X className="h-5 w-5" />
@@ -240,12 +235,12 @@ function HomeContent() {
                     placeholder="Search palettes..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    className="w-full rounded-xl border border-border/60 bg-secondary/50 py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all focus:border-primary/50 focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -254,22 +249,47 @@ function HomeContent() {
               )}
             </div>
 
-            <div className="p-4">
-              {savedPalettes.length === 0 ? (
-                <div className="py-12 text-center">
-                  <Heart className="mx-auto mb-3 h-12 w-12 text-muted-foreground/30" />
-                  <p className="text-muted-foreground">No saved palettes yet</p>
+            <div className="p-5">
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse rounded-2xl bg-secondary/50 p-4">
+                      <div className="mb-3 flex gap-1">
+                        {[1, 2, 3, 4, 5].map((j) => (
+                          <div key={j} className="h-16 flex-1 rounded-lg bg-muted" />
+                        ))}
+                      </div>
+                      <div className="h-4 w-32 rounded bg-muted" />
+                    </div>
+                  ))}
+                </div>
+              ) : savedPalettes.length === 0 ? (
+                <div className="py-16 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/50">
+                    <Heart className="h-8 w-8 text-muted-foreground/50" />
+                  </div>
+                  <p className="font-medium text-foreground">No saved palettes yet</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Tap the heart icon on any palette to save it
                   </p>
+                  <Link
+                    href="/"
+                    onClick={() => setShowSaved(false)}
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary"
+                  >
+                    Start generating palettes
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
               ) : filteredPalettes.length === 0 ? (
-                <div className="py-12 text-center">
-                  <Search className="mx-auto mb-3 h-12 w-12 text-muted-foreground/30" />
-                  <p className="text-muted-foreground">No palettes match your search</p>
+                <div className="py-16 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/50">
+                    <Search className="h-8 w-8 text-muted-foreground/50" />
+                  </div>
+                  <p className="font-medium text-foreground">No palettes match your search</p>
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="mt-2 text-sm font-medium text-primary"
+                    className="mt-2 text-sm font-semibold text-primary"
                   >
                     Clear search
                   </button>
@@ -301,79 +321,85 @@ function HomeContent() {
       {showSettings && (
         <div className="fixed inset-0 z-50">
           <div
-            className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
+            className="absolute inset-0 bg-foreground/25 backdrop-blur-md transition-opacity"
             onClick={() => setShowSettings(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 rounded-t-3xl bg-background pb-safe">
-            <div className="sticky top-0 flex items-center justify-between border-b border-border bg-background p-4">
-              <h2 className="text-lg font-bold text-foreground">Settings</h2>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="rounded-full bg-secondary p-2 text-secondary-foreground"
-              >
-                <span className="sr-only">Close</span>
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+          <div className="absolute bottom-0 left-0 right-0 rounded-t-[2rem] bg-background pb-safe shadow-2xl">
+            {/* Handle bar */}
+            <div className="flex justify-center py-3">
+              <div className="h-1 w-10 rounded-full bg-border" />
             </div>
-            <div className="p-4">
+            
+            <div className="border-b border-border/60 px-5 pb-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-bold tracking-tight text-foreground">Settings</h2>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  className="rounded-xl bg-secondary/80 p-2 text-secondary-foreground transition-colors hover:bg-secondary"
+                >
+                  <span className="sr-only">Close</span>
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-5">
               {/* Account Section */}
               <div className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
                   Account
                 </h3>
                 {user ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 rounded-xl bg-card p-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-3 rounded-2xl bg-secondary/50 p-4 ring-1 ring-border/50">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
                         <User className="h-5 w-5 text-primary" />
                       </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-foreground">{user.user_metadata?.display_name || "User"}</p>
-                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-foreground">{user.user_metadata?.display_name || "User"}</p>
+                        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
                       </div>
-                      <div className="flex items-center gap-1 text-green-600">
-                        <Cloud className="h-4 w-4" />
-                        <span className="text-xs">Synced</span>
+                      <div className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-emerald-600">
+                        <Cloud className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-semibold">Synced</span>
                       </div>
                     </div>
                     <button
                       onClick={refreshCloud}
                       disabled={isSyncing}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-card py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary/60 py-3 text-[13px] font-medium text-foreground transition-all duration-200 hover:bg-secondary"
                     >
                       <RefreshCw className={cn("h-4 w-4", isSyncing && "animate-spin")} />
                       {isSyncing ? "Syncing..." : "Refresh Palettes"}
                     </button>
                     <button
                       onClick={signOut}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-card py-3 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-secondary/60 py-3 text-[13px] font-medium text-foreground transition-all duration-200 hover:bg-secondary"
                     >
                       <LogOut className="h-4 w-4" />
                       Sign Out
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 rounded-xl bg-card p-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-3 rounded-2xl bg-secondary/50 p-4 ring-1 ring-border/50">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
                         <CloudOff className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium text-foreground">Local Storage</p>
-                        <p className="text-sm text-muted-foreground">Sign in to sync across devices</p>
+                        <p className="text-sm font-semibold text-foreground">Local Storage</p>
+                        <p className="text-xs text-muted-foreground">Sign in to sync across devices</p>
                       </div>
                     </div>
                     <Link
                       href="/auth/login"
-                      className="block w-full rounded-xl bg-primary py-3 text-center text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                      className="block w-full rounded-xl bg-primary py-3 text-center text-[13px] font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md"
                     >
                       Sign In
                     </Link>
                     <Link
                       href="/auth/sign-up"
-                      className="block w-full rounded-xl bg-card py-3 text-center text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                      className="block w-full rounded-xl bg-secondary/60 py-3 text-center text-[13px] font-medium text-foreground transition-all duration-200 hover:bg-secondary"
                     >
                       Create Account
                     </Link>
@@ -383,29 +409,29 @@ function HomeContent() {
 
               {/* Data Section */}
               <div className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
                   Data
                 </h3>
                 <button
                   onClick={handleClearSaved}
                   disabled={savedPalettes.length === 0}
-                  className="w-full rounded-xl bg-destructive/10 py-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/20 disabled:opacity-50"
+                  className="w-full rounded-xl bg-destructive/10 py-3 text-[13px] font-medium text-destructive transition-all duration-200 hover:bg-destructive/15 disabled:opacity-40"
                 >
                   Clear All Saved Palettes ({savedPalettes.length})
                 </button>
               </div>
 
               {/* App Info */}
-              <div className="text-center">
-                <p className="text-sm font-medium text-foreground">pal</p>
-                <p className="text-xs text-muted-foreground">Version 1.0.0</p>
+              <div className="pt-2 text-center">
+                <p className="text-sm font-semibold tracking-tight text-foreground">pal</p>
+                <p className="text-[11px] text-muted-foreground">Version 1.0.0</p>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} savedCount={savedPalettes.length} />
     </div>
   );
 }

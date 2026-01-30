@@ -130,43 +130,43 @@ export function EditablePalette({
 
   return (
     <>
-      <div className="overflow-hidden rounded-3xl bg-card shadow-lg">
+      <div className="overflow-hidden rounded-3xl bg-card shadow-md ring-1 ring-border/50">
         {/* Color swatches */}
-        <div className="flex h-48">
+        <div className="flex h-44">
           {currentPalette.colors.map((color, index) => (
             <button
               key={index}
               onClick={() => setEditingIndex(index)}
-              className="relative flex-1 transition-all duration-200 hover:flex-[1.3] active:flex-[1.2]"
+              className="relative flex-1 transition-all duration-200 ease-out hover:flex-[1.25] active:flex-[1.15]"
               style={{ backgroundColor: color.hex }}
             >
               {/* Lock indicator */}
               {lockedColors[index] && (
                 <div
-                  className="absolute left-1/2 top-3 -translate-x-1/2"
+                  className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-black/10 p-1"
                   style={{ color: getContrastColor(color.hex) }}
                 >
-                  <Lock className="h-4 w-4" />
+                  <Lock className="h-3 w-3" />
                 </div>
               )}
 
               {/* Copied indicator */}
               <div
                 className={cn(
-                  "absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200",
-                  copiedIndex === index && "opacity-100"
+                  "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
+                  copiedIndex === index ? "opacity-100" : "opacity-0"
                 )}
                 style={{ color: getContrastColor(color.hex) }}
               >
-                <div className="flex flex-col items-center gap-1">
+                <div className="flex flex-col items-center gap-0.5">
                   <Check className="h-5 w-5" />
-                  <span className="text-xs font-medium">Copied!</span>
+                  <span className="text-[10px] font-semibold">Copied</span>
                 </div>
               </div>
 
               {/* Tap to edit hint */}
               <div
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 text-xs font-medium opacity-50"
+                className="absolute bottom-2.5 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-40"
                 style={{ color: getContrastColor(color.hex) }}
               >
                 Edit
@@ -178,70 +178,75 @@ export function EditablePalette({
         {/* Info and actions */}
         <div className="p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-semibold text-foreground">{currentPalette.name}</h3>
-            <div className="flex items-center gap-1">
+            <h3 className="text-sm font-semibold text-foreground">{currentPalette.name}</h3>
+            <div className="flex items-center gap-0.5">
               <button
                 onClick={regenerateUnlocked}
                 disabled={isRegenerating}
-                className="rounded-full p-2 text-muted-foreground transition-all hover:text-foreground active:scale-90"
+                className="rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground active:scale-90"
               >
-                <RefreshCw className={cn("h-5 w-5", isRegenerating && "animate-spin")} />
+                <RefreshCw className={cn("h-[18px] w-[18px]", isRegenerating && "animate-spin")} />
               </button>
               <button
                 onClick={() => setShowExport(true)}
-                className="rounded-full p-2 text-muted-foreground transition-all hover:text-foreground active:scale-90"
+                className="rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground active:scale-90"
               >
-                <Download className="h-5 w-5" />
+                <Download className="h-[18px] w-[18px]" />
               </button>
               <button
                 onClick={handleShare}
-                className="rounded-full p-2 text-muted-foreground transition-all hover:text-foreground active:scale-90"
+                className="rounded-xl p-2 text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground active:scale-90"
               >
-                <Share2 className="h-5 w-5" />
+                <Share2 className="h-[18px] w-[18px]" />
               </button>
               <button
                 onClick={handleLike}
                 className={cn(
-                  "rounded-full p-2 transition-all active:scale-90",
-                  liked ? "text-red-500" : "text-muted-foreground hover:text-foreground"
+                  "rounded-xl p-2 transition-all duration-200 active:scale-90",
+                  liked ? "text-rose-500" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
-                <Heart className={cn("h-5 w-5", liked && "fill-current")} />
+                <Heart className={cn("h-[18px] w-[18px]", liked && "fill-current")} />
               </button>
             </div>
           </div>
 
           {/* Color chips */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {currentPalette.colors.map((color, index) => (
               <button
                 key={index}
                 onClick={() => copyToClipboard(color.hex, index)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+                  "flex items-center gap-1.5 rounded-lg px-2 py-1 text-[11px] font-medium transition-all duration-200",
                   lockedColors[index]
-                    ? "bg-amber-100 text-amber-700"
-                    : "bg-secondary text-secondary-foreground hover:bg-muted"
+                    ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+                    : "bg-secondary/70 text-secondary-foreground hover:bg-secondary"
                 )}
               >
                 {lockedColors[index] && <Lock className="h-2.5 w-2.5" />}
                 <span
-                  className="h-3 w-3 rounded-full border border-border"
+                  className="h-2.5 w-2.5 rounded-full ring-1 ring-black/10"
                   style={{ backgroundColor: color.hex }}
                 />
-                <span className="uppercase">{color.hex.replace("#", "")}</span>
+                <span className="font-mono uppercase">{color.hex.replace("#", "")}</span>
               </button>
             ))}
           </div>
 
-          {/* Copy all button */}
-          <button
-            onClick={copyAllColors}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-secondary py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-muted"
-          >
-            <Copy className="h-4 w-4" />
-            Copy All Colors
-          </button>
+          {/* Action hints */}
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2">
+            <p className="text-[11px] text-muted-foreground">
+              <span className="font-medium">Tip:</span> Tap color to edit, tap chip to copy
+            </p>
+            <button
+              onClick={copyAllColors}
+              className="flex items-center gap-1.5 rounded-lg bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-secondary/80"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              Copy All
+            </button>
+          </div>
         </div>
       </div>
 
