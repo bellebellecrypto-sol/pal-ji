@@ -10,13 +10,12 @@ import { GradientView } from "@/components/gradient-view";
 import { ContrastChecker } from "@/components/contrast-checker";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
-import { Settings, Heart, Search, X, User, Cloud, CloudOff, LogOut, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { ToastProvider, useToast } from "@/components/toast";
 import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
 import { useAuth } from "@/contexts/auth-context";
 import { usePaletteSync } from "@/hooks/use-palette-sync";
+import { ArrowRight } from "lucide-react"; // Import ArrowRight
 
 function HomeContent() {
   const [activeTab, setActiveTab] = useState<Tab>("generate");
@@ -260,7 +259,20 @@ function HomeContent() {
             </div>
 
             <div className="p-5">
-              {savedPalettes.length === 0 ? (
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="animate-pulse rounded-2xl bg-secondary/50 p-4">
+                      <div className="mb-3 flex gap-1">
+                        {[1, 2, 3, 4, 5].map((j) => (
+                          <div key={j} className="h-16 flex-1 rounded-lg bg-muted" />
+                        ))}
+                      </div>
+                      <div className="h-4 w-32 rounded bg-muted" />
+                    </div>
+                  ))}
+                </div>
+              ) : savedPalettes.length === 0 ? (
                 <div className="py-16 text-center">
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary/50">
                     <Heart className="h-8 w-8 text-muted-foreground/50" />
@@ -269,6 +281,14 @@ function HomeContent() {
                   <p className="mt-1 text-sm text-muted-foreground">
                     Tap the heart icon on any palette to save it
                   </p>
+                  <Link
+                    href="/"
+                    onClick={() => setShowSaved(false)}
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary"
+                  >
+                    Start generating palettes
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
               ) : filteredPalettes.length === 0 ? (
                 <div className="py-16 text-center">

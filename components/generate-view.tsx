@@ -81,13 +81,24 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
         )}
 
         {!currentPalette && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/5">
-              <span className="text-4xl text-primary/40">✦</span>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5">
+              <span className="text-5xl text-primary/50">✦</span>
             </div>
-            <p className="max-w-[240px] text-sm leading-relaxed text-muted-foreground">
-              Select a category and tap Generate to create your palette
+            <h3 className="mb-2 text-lg font-semibold text-foreground">Ready to create?</h3>
+            <p className="mb-6 max-w-[260px] text-sm leading-relaxed text-muted-foreground">
+              Choose a category above, then tap Generate to create your perfect color palette
             </p>
+            <div className="flex items-center gap-2 rounded-full bg-secondary/50 px-4 py-2 text-xs text-muted-foreground">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">1</span>
+              <span>Pick category</span>
+              <span className="text-border">→</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">2</span>
+              <span>Generate</span>
+              <span className="text-border">→</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">3</span>
+              <span>Save</span>
+            </div>
           </div>
         )}
       </main>

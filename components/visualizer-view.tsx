@@ -79,21 +79,43 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
         {/* Select Palette Button */}
         <button
           onClick={onSelectPalette}
-          className="mb-6 w-full rounded-2xl border-2 border-dashed border-border bg-secondary/50 p-4 text-center transition-colors hover:bg-secondary"
+          className={cn(
+            "mb-6 w-full rounded-2xl border-2 p-4 text-center transition-all duration-200",
+            palette 
+              ? "border-primary/30 bg-primary/5 hover:bg-primary/10" 
+              : "border-dashed border-border bg-secondary/50 hover:bg-secondary hover:border-muted-foreground"
+          )}
         >
-          <p className="font-medium text-foreground">
-            {palette ? palette.name : "Tap to select a palette"}
-          </p>
-          {palette && (
-            <div className="mt-2 flex justify-center gap-1">
-              {palette.colors.map((c, i) => (
-                <span
-                  key={i}
-                  className="h-4 w-4 rounded-full border border-border"
-                  style={{ backgroundColor: c.hex }}
-                />
-              ))}
-            </div>
+          {palette ? (
+            <>
+              <div className="mb-2 flex justify-center gap-1.5">
+                {palette.colors.map((c, i) => (
+                  <span
+                    key={i}
+                    className="h-6 w-6 rounded-lg ring-1 ring-black/10"
+                    style={{ backgroundColor: c.hex }}
+                  />
+                ))}
+              </div>
+              <p className="text-sm font-semibold text-foreground">{palette.name}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Tap to change palette</p>
+            </>
+          ) : (
+            <>
+              <div className="mb-2 flex justify-center gap-1.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <span
+                    key={i}
+                    className="h-6 w-6 rounded-lg bg-muted animate-pulse"
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  />
+                ))}
+              </div>
+              <p className="text-sm font-medium text-foreground">Select a palette</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Choose from your saved palettes to preview
+              </p>
+            </>
           )}
         </button>
 

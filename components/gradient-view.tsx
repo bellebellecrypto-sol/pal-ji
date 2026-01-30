@@ -155,9 +155,9 @@ export function GradientView() {
         {/* Generate Button */}
         <button
           onClick={handleGenerate}
-          className="mb-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-semibold text-primary-foreground shadow-lg transition-all duration-300 active:scale-[0.98]"
+          className="group mb-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
         >
-          <RefreshCw className="h-5 w-5" />
+          <RefreshCw className="h-5 w-5 transition-transform group-hover:rotate-90" />
           Generate New Gradient
         </button>
 

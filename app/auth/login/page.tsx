@@ -1,26 +1,43 @@
 "use client";
 
-import React from "react"
-
-import { useState } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { login } from "../actions";
-import { Palette, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Palette, Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [touched, setTouched] = useState({ email: false, password: false });
+
+  // Real-time email validation
+  useEffect(() => {
+    if (touched.email && email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setEmailError(!emailRegex.test(email) ? "Please enter a valid email" : "");
+    } else {
+      setEmailError("");
+    }
+  }, [email, touched.email]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (emailError || !email || !password) return;
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
     await login(formData);
     setIsLoading(false);
   };
+
+  const isFormValid = email && password && !emailError;
 
   return (
     <div className="flex min-h-screen flex-col bg-background px-6 pb-safe pt-safe">
@@ -50,16 +67,33 @@ export default function LoginPage() {
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Mail className={cn(
+                  "absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transition-colors",
+                  emailError ? "text-destructive" : "text-muted-foreground"
+                )} />
                 <input
                   id="email"
                   name="email"
                   type="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-border bg-card py-3.5 pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                  className={cn(
+                    "w-full rounded-xl border bg-card py-3.5 pl-12 pr-4 text-foreground placeholder:text-muted-foreground transition-all focus:outline-none focus:ring-2",
+                    emailError 
+                      ? "border-destructive focus:border-destructive focus:ring-destructive/20" 
+                      : "border-border focus:border-ring focus:ring-ring/20"
+                  )}
                 />
               </div>
+              {emailError && (
+                <p className="mt-1.5 flex items-center gap-1 text-xs text-destructive">
+                  <AlertCircle className="h-3 w-3" />
+                  {emailError}
+                </p>
+              )}
             </div>
 
             <div>
@@ -73,13 +107,16 @@ export default function LoginPage() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
                   placeholder="Enter your password"
-                  className="w-full rounded-xl border border-border bg-card py-3.5 pl-12 pr-12 text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
+                  className="w-full rounded-xl border border-border bg-card py-3.5 pl-12 pr-12 text-foreground placeholder:text-muted-foreground transition-all focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -88,8 +125,13 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-50"
+              disabled={isLoading || !isFormValid}
+              className={cn(
+                "flex w-full items-center justify-center gap-2 rounded-xl py-3.5 font-semibold transition-all active:scale-[0.98]",
+                isFormValid 
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              )}
             >
               {isLoading ? (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />

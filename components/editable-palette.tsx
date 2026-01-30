@@ -234,14 +234,19 @@ export function EditablePalette({
             ))}
           </div>
 
-          {/* Copy all button */}
-          <button
-            onClick={copyAllColors}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-secondary/60 py-2.5 text-[13px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-secondary"
-          >
-            <Copy className="h-4 w-4" />
-            Copy All Colors
-          </button>
+          {/* Action hints */}
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-muted/50 px-3 py-2">
+            <p className="text-[11px] text-muted-foreground">
+              <span className="font-medium">Tip:</span> Tap color to edit, tap chip to copy
+            </p>
+            <button
+              onClick={copyAllColors}
+              className="flex items-center gap-1.5 rounded-lg bg-secondary px-2.5 py-1.5 text-[11px] font-medium text-secondary-foreground transition-all duration-200 hover:bg-secondary/80"
+            >
+              <Copy className="h-3.5 w-3.5" />
+              Copy All
+            </button>
+          </div>
         </div>
       </div>
 
