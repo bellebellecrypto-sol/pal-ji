@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { DM_Sans as V0_Font_DM_Sans, Inconsolata as V0_Font_Inconsolata } from 'next/font/google'
-import { AuthProvider } from "@/contexts/auth-context";
 
 // Initialize fonts
 const _dmSans = V0_Font_DM_Sans({ subsets: ['latin'], weight: ["100","200","300","400","500","600","700","800","900","1000"] })
@@ -54,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased overscroll-none">
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   );
