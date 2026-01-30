@@ -52,6 +52,7 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
   const [copied, setCopied] = useState(false);
   const [showPaletteSelector, setShowPaletteSelector] = useState(false);
   const [selectedPalette, setSelectedPalette] = useState<Palette | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
   const { impact, notification } = useHaptics();
   const { copy } = useClipboard();
   const { share, canShare } = useShare();
@@ -83,6 +84,16 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
 
   const handleGenerate = async () => {
     await impact("medium");
+    
+    // If a palette was selected, show reset animation
+    if (selectedPalette) {
+      setIsResetting(true);
+      setSelectedPalette(null);
+      // Brief delay for visual feedback before generating
+      await new Promise(resolve => setTimeout(resolve, 150));
+      setIsResetting(false);
+    }
+    
     setGradient(generateRandomGradient());
   };
 
@@ -194,20 +205,23 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
             <button
               onClick={() => setShowPaletteSelector(true)}
               className={cn(
-                "flex w-full items-center justify-between rounded-2xl p-4 transition-all duration-200",
+                "flex w-full items-center justify-between rounded-2xl p-4 transition-all duration-300",
                 selectedPalette
                   ? "bg-primary/10 ring-2 ring-primary/30"
-                  : "bg-card ring-1 ring-border hover:ring-primary/30"
+                  : "bg-card ring-1 ring-border hover:ring-primary/30",
+                isResetting && "animate-pulse ring-2 ring-emerald-500/50 bg-emerald-500/5"
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl",
-                  selectedPalette ? "bg-primary/20" : "bg-secondary"
+                  "flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300",
+                  selectedPalette ? "bg-primary/20" : "bg-secondary",
+                  isResetting && "bg-emerald-500/20 scale-110"
                 )}>
                   <PaletteIcon className={cn(
-                    "h-5 w-5",
-                    selectedPalette ? "text-primary" : "text-muted-foreground"
+                    "h-5 w-5 transition-all duration-300",
+                    selectedPalette ? "text-primary" : "text-muted-foreground",
+                    isResetting && "text-emerald-600 rotate-12"
                   )} />
                 </div>
                 <div className="text-left">
@@ -218,7 +232,7 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
                         {selectedPalette.colors.slice(0, 4).map((c, i) => (
                           <span
                             key={i}
-                            className="h-3 w-3 rounded-full ring-1 ring-black/10"
+                            className="h-3 w-3 rounded-full ring-1 ring-black/10 transition-transform duration-200"
                             style={{ backgroundColor: c.hex }}
                           />
                         ))}
@@ -226,8 +240,18 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
                     </>
                   ) : (
                     <>
-                      <p className="text-sm font-medium text-foreground">Use Saved Palette</p>
-                      <p className="text-xs text-muted-foreground">Create gradient from your colors</p>
+                      <p className={cn(
+                        "text-sm font-medium transition-colors duration-300",
+                        isResetting ? "text-emerald-600" : "text-foreground"
+                      )}>
+                        {isResetting ? "Switching to Random" : "Use Saved Palette"}
+                      </p>
+                      <p className={cn(
+                        "text-xs transition-colors duration-300",
+                        isResetting ? "text-emerald-500" : "text-muted-foreground"
+                      )}>
+                        {isResetting ? "Generating new gradient..." : "Create gradient from your colors"}
+                      </p>
                     </>
                   )}
                 </div>
@@ -239,11 +263,15 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
                     clearPaletteSelection();
                   }}
                   className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  aria-label="Clear palette selection"
                 >
                   <X className="h-4 w-4" />
                 </button>
               ) : (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                <ChevronDown className={cn(
+                  "h-5 w-5 transition-all duration-300",
+                  isResetting ? "text-emerald-500 rotate-180" : "text-muted-foreground"
+                )} />
               )}
             </button>
           )}
@@ -251,16 +279,24 @@ export function GradientView({ savedPalettes = [] }: GradientViewProps) {
           {/* Generate Random Button */}
           <button
             onClick={handleGenerate}
+            disabled={isResetting}
             className={cn(
-              "group flex w-full items-center justify-center gap-2 rounded-2xl py-4 font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]",
+              "group flex w-full items-center justify-center gap-2 rounded-2xl py-4 font-semibold shadow-md transition-all duration-300 hover:shadow-lg active:scale-[0.98]",
               selectedPalette
-                ? "bg-secondary text-secondary-foreground"
-                : "bg-primary text-primary-foreground"
+                ? "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                : "bg-primary text-primary-foreground",
+              isResetting && "opacity-80 cursor-wait"
             )}
+            aria-label={selectedPalette ? "Switch to random gradient" : "Generate random gradient"}
           >
-            {selectedPalette ? (
+            {isResetting ? (
               <>
-                <Sparkles className="h-5 w-5" />
+                <RefreshCw className="h-5 w-5 animate-spin" />
+                Generating...
+              </>
+            ) : selectedPalette ? (
+              <>
+                <Sparkles className="h-5 w-5 transition-transform group-hover:scale-110" />
                 Generate Random Instead
               </>
             ) : (
