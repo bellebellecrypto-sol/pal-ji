@@ -227,59 +227,61 @@ interface PreviewProps {
 
 function MobileAppPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
   return (
-    <div className="relative mx-auto w-[240px] overflow-hidden rounded-[24px] border-4" style={{ borderColor: dark.hex }}>
-      <div className="h-[480px]" style={{ backgroundColor: light.hex }}>
-        {/* Status Bar */}
-        <div className="flex items-center justify-between px-4 py-2" style={{ backgroundColor: primary.hex }}>
-          <span className="text-xs font-medium" style={{ color: getContrastColor(primary.hex) }}>9:41</span>
-          <div className="flex gap-1">
-            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex) }} />
-            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex) }} />
-          </div>
-        </div>
-
-        {/* Header */}
-        <div className="p-4" style={{ backgroundColor: primary.hex }}>
-          <h3 className="text-lg font-bold" style={{ color: getContrastColor(primary.hex) }}>Welcome Back</h3>
-          <p className="text-sm opacity-80" style={{ color: getContrastColor(primary.hex) }}>Here is your dashboard</p>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 space-y-3">
-          <div className="rounded-xl p-4" style={{ backgroundColor: secondary.hex }}>
-            <p className="text-sm font-medium" style={{ color: getContrastColor(secondary.hex) }}>Total Balance</p>
-            <p className="text-2xl font-bold" style={{ color: getContrastColor(secondary.hex) }}>$12,450</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg p-3" style={{ backgroundColor: dark.hex }}>
-              <p className="text-xs" style={{ color: getContrastColor(dark.hex) }}>Income</p>
-              <p className="font-bold" style={{ color: getContrastColor(dark.hex) }}>$8,200</p>
-            </div>
-            <div className="rounded-lg p-3" style={{ backgroundColor: muted.hex }}>
-              <p className="text-xs" style={{ color: getContrastColor(muted.hex) }}>Expenses</p>
-              <p className="font-bold" style={{ color: getContrastColor(muted.hex) }}>$4,100</p>
+    <div className="p-6">
+      <div className="relative mx-auto w-[220px] overflow-hidden rounded-[28px] border-[6px] shadow-xl" style={{ borderColor: dark.hex }}>
+        <div className="h-[420px]" style={{ backgroundColor: light.hex }}>
+          {/* Status Bar */}
+          <div className="flex items-center justify-between px-4 py-2" style={{ backgroundColor: primary.hex }}>
+            <span className="text-[10px] font-medium" style={{ color: getContrastColor(primary.hex) }}>9:41</span>
+            <div className="flex gap-1">
+              <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex) }} />
+              <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex) }} />
             </div>
           </div>
 
-          <div className="space-y-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-3 rounded-lg border p-3" style={{ borderColor: muted.hex }}>
-                <div className="h-8 w-8 rounded-full" style={{ backgroundColor: primary.hex }} />
-                <div className="flex-1">
-                  <div className="h-2 w-20 rounded" style={{ backgroundColor: dark.hex }} />
-                  <div className="mt-1 h-2 w-12 rounded" style={{ backgroundColor: muted.hex }} />
-                </div>
+          {/* Header */}
+          <div className="px-4 pb-4 pt-3" style={{ backgroundColor: primary.hex }}>
+            <h3 className="text-base font-bold" style={{ color: getContrastColor(primary.hex) }}>Welcome Back</h3>
+            <p className="text-xs opacity-80" style={{ color: getContrastColor(primary.hex) }}>Here is your dashboard</p>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-2.5 p-3">
+            <div className="rounded-xl p-3" style={{ backgroundColor: secondary.hex }}>
+              <p className="text-xs font-medium" style={{ color: getContrastColor(secondary.hex) }}>Total Balance</p>
+              <p className="text-xl font-bold" style={{ color: getContrastColor(secondary.hex) }}>$12,450</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg p-2.5" style={{ backgroundColor: dark.hex }}>
+                <p className="text-[10px]" style={{ color: getContrastColor(dark.hex) }}>Income</p>
+                <p className="text-sm font-bold" style={{ color: getContrastColor(dark.hex) }}>$8,200</p>
               </div>
+              <div className="rounded-lg p-2.5" style={{ backgroundColor: muted.hex }}>
+                <p className="text-[10px]" style={{ color: getContrastColor(muted.hex) }}>Expenses</p>
+                <p className="text-sm font-bold" style={{ color: getContrastColor(muted.hex) }}>$4,100</p>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex items-center gap-2.5 rounded-lg border p-2.5" style={{ borderColor: muted.hex }}>
+                  <div className="h-7 w-7 rounded-full" style={{ backgroundColor: primary.hex }} />
+                  <div className="flex-1">
+                    <div className="h-1.5 w-16 rounded" style={{ backgroundColor: dark.hex }} />
+                    <div className="mt-1 h-1.5 w-10 rounded" style={{ backgroundColor: muted.hex }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Nav */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-around border-t px-4 py-3" style={{ backgroundColor: light.hex, borderColor: muted.hex }}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-5 w-5 rounded-full" style={{ backgroundColor: i === 1 ? primary.hex : muted.hex }} />
             ))}
           </div>
-        </div>
-
-        {/* Bottom Nav */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-around border-t p-3" style={{ backgroundColor: light.hex, borderColor: muted.hex }}>
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-6 w-6 rounded-full" style={{ backgroundColor: i === 1 ? primary.hex : muted.hex }} />
-          ))}
         </div>
       </div>
     </div>
@@ -288,47 +290,49 @@ function MobileAppPreview({ primary, secondary, dark, muted, light }: PreviewPro
 
 function DashboardPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
   return (
-    <div className="h-[350px] p-4" style={{ backgroundColor: light.hex }}>
-      {/* Sidebar indicator */}
-      <div className="flex gap-4 h-full">
-        <div className="w-12 rounded-xl" style={{ backgroundColor: dark.hex }}>
-          <div className="space-y-3 p-2 pt-4">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-6 w-6 mx-auto rounded-lg" style={{ backgroundColor: i === 1 ? primary.hex : muted.hex }} />
-            ))}
-          </div>
-        </div>
-
-        <div className="flex-1 space-y-4">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="h-4 w-24 rounded" style={{ backgroundColor: dark.hex }} />
-              <div className="mt-1 h-3 w-16 rounded" style={{ backgroundColor: muted.hex }} />
-            </div>
-            <div className="h-8 w-8 rounded-full" style={{ backgroundColor: secondary.hex }} />
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-2">
-            {[primary, secondary, dark].map((color, i) => (
-              <div key={i} className="rounded-xl p-3" style={{ backgroundColor: color.hex }}>
-                <div className="h-3 w-12 rounded" style={{ backgroundColor: getContrastColor(color.hex), opacity: 0.7 }} />
-                <div className="mt-2 h-5 w-16 rounded" style={{ backgroundColor: getContrastColor(color.hex) }} />
-              </div>
-            ))}
-          </div>
-
-          {/* Chart placeholder */}
-          <div className="flex-1 rounded-xl p-4" style={{ backgroundColor: "#ffffff", border: `1px solid ${muted.hex}` }}>
-            <div className="flex h-full items-end justify-around gap-2">
-              {[60, 80, 45, 90, 70, 85, 55].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 rounded-t"
-                  style={{ height: `${h}%`, backgroundColor: i % 2 === 0 ? primary.hex : secondary.hex }}
-                />
+    <div className="p-6">
+      <div className="h-[320px] overflow-hidden rounded-xl p-4 shadow-sm" style={{ backgroundColor: light.hex, border: `1px solid ${muted.hex}30` }}>
+        {/* Sidebar indicator */}
+        <div className="flex gap-3 h-full">
+          <div className="w-10 rounded-lg" style={{ backgroundColor: dark.hex }}>
+            <div className="space-y-2.5 p-1.5 pt-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="h-5 w-5 mx-auto rounded-md" style={{ backgroundColor: i === 1 ? primary.hex : muted.hex }} />
               ))}
+            </div>
+          </div>
+
+          <div className="flex-1 flex flex-col gap-3">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="h-3 w-20 rounded" style={{ backgroundColor: dark.hex }} />
+                <div className="mt-1 h-2 w-14 rounded" style={{ backgroundColor: muted.hex }} />
+              </div>
+              <div className="h-7 w-7 rounded-full" style={{ backgroundColor: secondary.hex }} />
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-3 gap-2">
+              {[primary, secondary, dark].map((color, i) => (
+                <div key={i} className="rounded-lg p-2.5" style={{ backgroundColor: color.hex }}>
+                  <div className="h-2 w-10 rounded" style={{ backgroundColor: getContrastColor(color.hex), opacity: 0.7 }} />
+                  <div className="mt-1.5 h-4 w-12 rounded" style={{ backgroundColor: getContrastColor(color.hex) }} />
+                </div>
+              ))}
+            </div>
+
+            {/* Chart placeholder */}
+            <div className="flex-1 min-h-0 rounded-lg p-3" style={{ backgroundColor: "#ffffff", border: `1px solid ${muted.hex}` }}>
+              <div className="flex h-full items-end justify-around gap-1.5">
+                {[60, 80, 45, 90, 70, 85, 55].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t"
+                    style={{ height: `${h}%`, backgroundColor: i % 2 === 0 ? primary.hex : secondary.hex }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -339,24 +343,24 @@ function DashboardPreview({ primary, secondary, dark, muted, light }: PreviewPro
 
 function CardPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
   return (
-    <div className="flex items-center justify-center p-8" style={{ backgroundColor: light.hex }}>
-      <div className="w-full max-w-[280px] space-y-4">
+    <div className="flex items-center justify-center p-6" style={{ backgroundColor: light.hex }}>
+      <div className="w-full max-w-[260px] space-y-4">
         {/* Credit Card Style */}
         <div
-          className="relative h-[160px] rounded-2xl p-4"
+          className="relative h-[140px] rounded-xl p-3.5 shadow-lg"
           style={{
             background: `linear-gradient(135deg, ${primary.hex} 0%, ${secondary.hex} 100%)`,
           }}
         >
           <div className="flex items-center justify-between">
-            <div className="h-8 w-10 rounded" style={{ backgroundColor: getContrastColor(primary.hex), opacity: 0.3 }} />
-            <div className="text-sm font-bold" style={{ color: getContrastColor(primary.hex) }}>VISA</div>
+            <div className="h-6 w-8 rounded" style={{ backgroundColor: getContrastColor(primary.hex), opacity: 0.3 }} />
+            <div className="text-xs font-bold" style={{ color: getContrastColor(primary.hex) }}>VISA</div>
           </div>
-          <div className="absolute bottom-4 left-4 right-4">
-            <p className="font-mono text-lg tracking-wider" style={{ color: getContrastColor(primary.hex) }}>
+          <div className="absolute bottom-3.5 left-3.5 right-3.5">
+            <p className="font-mono text-sm tracking-wider" style={{ color: getContrastColor(primary.hex) }}>
               **** **** **** 4589
             </p>
-            <div className="mt-2 flex justify-between text-xs" style={{ color: getContrastColor(primary.hex), opacity: 0.8 }}>
+            <div className="mt-1.5 flex justify-between text-[10px]" style={{ color: getContrastColor(primary.hex), opacity: 0.8 }}>
               <span>JOHN DOE</span>
               <span>12/28</span>
             </div>
@@ -364,14 +368,14 @@ function CardPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
         </div>
 
         {/* Product Card */}
-        <div className="overflow-hidden rounded-xl border" style={{ borderColor: muted.hex, backgroundColor: "#ffffff" }}>
-          <div className="h-24" style={{ backgroundColor: secondary.hex }} />
-          <div className="p-4">
-            <div className="h-3 w-20 rounded" style={{ backgroundColor: dark.hex }} />
-            <div className="mt-2 h-2 w-32 rounded" style={{ backgroundColor: muted.hex }} />
-            <div className="mt-3 flex items-center justify-between">
-              <span className="font-bold" style={{ color: primary.hex }}>$49.00</span>
-              <button className="rounded-lg px-3 py-1 text-sm" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
+        <div className="overflow-hidden rounded-xl border shadow-sm" style={{ borderColor: muted.hex, backgroundColor: "#ffffff" }}>
+          <div className="h-20" style={{ backgroundColor: secondary.hex }} />
+          <div className="p-3">
+            <div className="h-2.5 w-16 rounded" style={{ backgroundColor: dark.hex }} />
+            <div className="mt-1.5 h-2 w-28 rounded" style={{ backgroundColor: muted.hex }} />
+            <div className="mt-2.5 flex items-center justify-between">
+              <span className="text-sm font-bold" style={{ color: primary.hex }}>$49.00</span>
+              <button className="rounded-md px-2.5 py-1 text-xs" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
                 Add
               </button>
             </div>
@@ -384,40 +388,40 @@ function CardPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
 
 function EmailPreview({ primary, secondary, dark, muted, light }: PreviewProps) {
   return (
-    <div className="p-4" style={{ backgroundColor: muted.hex }}>
-      <div className="mx-auto max-w-[300px] overflow-hidden rounded-xl" style={{ backgroundColor: light.hex }}>
+    <div className="p-6" style={{ backgroundColor: muted.hex }}>
+      <div className="mx-auto max-w-[280px] overflow-hidden rounded-xl shadow-sm" style={{ backgroundColor: light.hex }}>
         {/* Email Header */}
-        <div className="p-6 text-center" style={{ backgroundColor: primary.hex }}>
-          <div className="mx-auto mb-3 h-12 w-12 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex), opacity: 0.2 }} />
-          <h3 className="text-lg font-bold" style={{ color: getContrastColor(primary.hex) }}>Welcome!</h3>
-          <p className="mt-1 text-sm opacity-80" style={{ color: getContrastColor(primary.hex) }}>Thanks for signing up</p>
+        <div className="px-5 py-5 text-center" style={{ backgroundColor: primary.hex }}>
+          <div className="mx-auto mb-2.5 h-10 w-10 rounded-full" style={{ backgroundColor: getContrastColor(primary.hex), opacity: 0.2 }} />
+          <h3 className="text-base font-bold" style={{ color: getContrastColor(primary.hex) }}>Welcome!</h3>
+          <p className="mt-0.5 text-xs opacity-80" style={{ color: getContrastColor(primary.hex) }}>Thanks for signing up</p>
         </div>
 
         {/* Email Body */}
-        <div className="p-6">
-          <div className="space-y-2">
-            <div className="h-2 w-full rounded" style={{ backgroundColor: dark.hex }} />
-            <div className="h-2 w-4/5 rounded" style={{ backgroundColor: muted.hex }} />
-            <div className="h-2 w-full rounded" style={{ backgroundColor: muted.hex }} />
-            <div className="h-2 w-3/4 rounded" style={{ backgroundColor: muted.hex }} />
+        <div className="p-5">
+          <div className="space-y-1.5">
+            <div className="h-1.5 w-full rounded" style={{ backgroundColor: dark.hex }} />
+            <div className="h-1.5 w-4/5 rounded" style={{ backgroundColor: muted.hex }} />
+            <div className="h-1.5 w-full rounded" style={{ backgroundColor: muted.hex }} />
+            <div className="h-1.5 w-3/4 rounded" style={{ backgroundColor: muted.hex }} />
           </div>
 
           <button
-            className="mt-6 w-full rounded-lg py-3 text-center font-semibold"
+            className="mt-5 w-full rounded-lg py-2.5 text-center text-sm font-semibold"
             style={{ backgroundColor: secondary.hex, color: getContrastColor(secondary.hex) }}
           >
             Get Started
           </button>
 
-          <div className="mt-6 space-y-2">
-            <div className="h-2 w-full rounded" style={{ backgroundColor: muted.hex }} />
-            <div className="h-2 w-2/3 rounded" style={{ backgroundColor: muted.hex }} />
+          <div className="mt-5 space-y-1.5">
+            <div className="h-1.5 w-full rounded" style={{ backgroundColor: muted.hex }} />
+            <div className="h-1.5 w-2/3 rounded" style={{ backgroundColor: muted.hex }} />
           </div>
         </div>
 
         {/* Email Footer */}
-        <div className="border-t p-4 text-center" style={{ borderColor: muted.hex }}>
-          <p className="text-xs" style={{ color: muted.hex }}>Unsubscribe | Privacy Policy</p>
+        <div className="border-t px-4 py-3 text-center" style={{ borderColor: muted.hex }}>
+          <p className="text-[10px]" style={{ color: muted.hex }}>Unsubscribe | Privacy Policy</p>
         </div>
       </div>
     </div>
@@ -426,43 +430,45 @@ function EmailPreview({ primary, secondary, dark, muted, light }: PreviewProps) 
 
 function WebsitePreview({ primary, secondary, dark, muted, light }: PreviewProps) {
   return (
-    <div className="h-[350px]" style={{ backgroundColor: light.hex }}>
-      {/* Nav */}
-      <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: muted.hex }}>
-        <div className="h-4 w-16 rounded" style={{ backgroundColor: primary.hex }} />
-        <div className="flex gap-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-2 w-10 rounded" style={{ backgroundColor: dark.hex }} />
+    <div className="p-6">
+      <div className="overflow-hidden rounded-xl shadow-sm" style={{ backgroundColor: light.hex, border: `1px solid ${muted.hex}30` }}>
+        {/* Nav */}
+        <div className="flex items-center justify-between border-b px-3 py-2.5" style={{ borderColor: muted.hex }}>
+          <div className="h-3 w-12 rounded" style={{ backgroundColor: primary.hex }} />
+          <div className="flex gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-1.5 w-8 rounded" style={{ backgroundColor: dark.hex }} />
+            ))}
+          </div>
+          <button className="rounded px-2 py-0.5 text-[10px]" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
+            Sign Up
+          </button>
+        </div>
+
+        {/* Hero */}
+        <div className="px-5 py-6 text-center">
+          <div className="mx-auto h-3 w-32 rounded" style={{ backgroundColor: dark.hex }} />
+          <div className="mx-auto mt-1.5 h-2 w-44 rounded" style={{ backgroundColor: muted.hex }} />
+          <div className="mx-auto mt-3 flex justify-center gap-2">
+            <button className="rounded-md px-3 py-1.5 text-[10px] font-medium" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
+              Get Started
+            </button>
+            <button className="rounded-md px-3 py-1.5 text-[10px] font-medium" style={{ backgroundColor: secondary.hex, color: getContrastColor(secondary.hex) }}>
+              Learn More
+            </button>
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="grid grid-cols-3 gap-2 px-4 pb-4">
+          {[primary, secondary, dark].map((color, i) => (
+            <div key={i} className="rounded-lg p-2.5 text-center" style={{ backgroundColor: `${color.hex}15` }}>
+              <div className="mx-auto mb-1.5 h-6 w-6 rounded-full" style={{ backgroundColor: color.hex }} />
+              <div className="mx-auto h-1.5 w-10 rounded" style={{ backgroundColor: dark.hex }} />
+              <div className="mx-auto mt-1 h-1.5 w-12 rounded" style={{ backgroundColor: muted.hex }} />
+            </div>
           ))}
         </div>
-        <button className="rounded px-3 py-1 text-xs" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
-          Sign Up
-        </button>
-      </div>
-
-      {/* Hero */}
-      <div className="px-6 py-8 text-center">
-        <div className="mx-auto h-4 w-40 rounded" style={{ backgroundColor: dark.hex }} />
-        <div className="mx-auto mt-2 h-3 w-56 rounded" style={{ backgroundColor: muted.hex }} />
-        <div className="mx-auto mt-4 flex justify-center gap-2">
-          <button className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: primary.hex, color: getContrastColor(primary.hex) }}>
-            Get Started
-          </button>
-          <button className="rounded-lg px-4 py-2 text-sm font-medium" style={{ backgroundColor: secondary.hex, color: getContrastColor(secondary.hex) }}>
-            Learn More
-          </button>
-        </div>
-      </div>
-
-      {/* Features */}
-      <div className="grid grid-cols-3 gap-3 px-4">
-        {[primary, secondary, dark].map((color, i) => (
-          <div key={i} className="rounded-xl p-3 text-center" style={{ backgroundColor: `${color.hex}15` }}>
-            <div className="mx-auto mb-2 h-8 w-8 rounded-full" style={{ backgroundColor: color.hex }} />
-            <div className="mx-auto h-2 w-12 rounded" style={{ backgroundColor: dark.hex }} />
-            <div className="mx-auto mt-1 h-2 w-16 rounded" style={{ backgroundColor: muted.hex }} />
-          </div>
-        ))}
       </div>
     </div>
   );
