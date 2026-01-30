@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { type Palette, type Color, getContrastColor, generatePalette, type UseCase } from "@/lib/colors";
 import { cn } from "@/lib/utils";
-import { Check, Copy, Heart, Lock, RefreshCw, Share2, Download, Pencil } from "lucide-react";
+import { Check, Copy, Heart, Lock, RefreshCw, Share2, Download, Pencil, Sparkles } from "lucide-react";
 import { useHaptics, useClipboard, useShare } from "@/hooks/use-native";
 import { ColorEditor } from "./color-editor";
 import { ExportModal } from "./export-modal";
@@ -26,12 +26,15 @@ export function EditablePalette({
 }: EditablePaletteProps) {
   const [currentPalette, setCurrentPalette] = useState(palette);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [brightenIndex, setBrightenIndex] = useState<number | null>(null);
   const [liked, setLiked] = useState(isSaved);
+  const [heartAnimating, setHeartAnimating] = useState(false);
   const [lockedColors, setLockedColors] = useState<boolean[]>([false, false, false, false, false]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [lastEditedIndex, setLastEditedIndex] = useState(0);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [regenerateKey, setRegenerateKey] = useState(0);
   
   const { impact, notification, selection } = useHaptics();
   const { copy } = useClipboard();
@@ -46,7 +49,13 @@ export function EditablePalette({
   const copyToClipboard = async (hex: string, index: number) => {
     const success = await copy(hex);
     if (success) {
-      await impact("light");
+      await selection(); // Light tick haptic
+      
+      // Brighten effect
+      setBrightenIndex(index);
+      setTimeout(() => setBrightenIndex(null), 300);
+      
+      // Show checkmark
       setCopiedIndex(index);
       showToast(`Copied ${hex}`, "success");
       setTimeout(() => setCopiedIndex(null), 1500);
@@ -65,6 +74,13 @@ export function EditablePalette({
   const handleLike = async () => {
     const newLiked = !liked;
     setLiked(newLiked);
+    
+    // Trigger heart animation
+    if (newLiked) {
+      setHeartAnimating(true);
+      setTimeout(() => setHeartAnimating(false), 400);
+    }
+    
     await notification(newLiked ? "success" : "warning");
     showToast(newLiked ? "Palette saved!" : "Palette removed", newLiked ? "success" : "info");
     if (onSave) {
@@ -102,7 +118,8 @@ export function EditablePalette({
     showToast("Color updated", "success");
   };
 
-  const handleEditSwatch = (index: number) => {
+  const handleEditSwatch = async (index: number) => {
+    await selection();
     setEditingIndex(index);
     setLastEditedIndex(index);
   };
@@ -123,6 +140,7 @@ export function EditablePalette({
       };
       setCurrentPalette(updatedPalette);
       onPaletteChange?.(updatedPalette);
+      setRegenerateKey((k) => k + 1); // Trigger stagger animation
       setIsRegenerating(false);
       
       const lockedCount = lockedColors.filter(Boolean).length;
@@ -131,12 +149,15 @@ export function EditablePalette({
       } else {
         showToast("Palette regenerated!", "success");
       }
-    }, 300);
+    }, 400);
   };
 
   return (
     <>
-      <div className="overflow-hidden rounded-3xl bg-card shadow-sm ring-1 ring-border/50">
+      <div className={cn(
+        "overflow-hidden rounded-3xl bg-card shadow-sm ring-1 ring-border/50",
+        isRegenerating && "animate-crossfade-blur"
+      )}>
         {/* Color swatches */}
         <div className="relative">
           <div className="flex h-44">
@@ -144,29 +165,46 @@ export function EditablePalette({
               <button
                 key={index}
                 onClick={() => handleEditSwatch(index)}
-                className="relative flex-1 transition-opacity duration-150 active:opacity-95 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+                className={cn(
+                  "relative flex-1 transition-all duration-150",
+                  "active:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
+                  brightenIndex === index && "animate-swatch-brighten"
+                )}
                 style={{ backgroundColor: color.hex }}
               >
                 {/* Lock indicator */}
                 {lockedColors[index] && (
                   <div
-                    className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-black/10 p-1.5"
+                    className="absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-black/10 p-1.5 animate-spring-pop"
                     style={{ color: getContrastColor(color.hex) }}
                   >
                     <Lock className="h-3 w-3" />
                   </div>
                 )}
 
-                {/* Copied indicator */}
+                {/* Copied indicator with sparkle */}
                 <div
                   className={cn(
-                    "absolute inset-0 flex items-center justify-center transition-opacity duration-200",
-                    copiedIndex === index ? "opacity-100" : "opacity-0"
+                    "absolute inset-0 flex items-center justify-center transition-all duration-200",
+                    copiedIndex === index ? "opacity-100 scale-100" : "opacity-0 scale-90"
                   )}
                   style={{ color: getContrastColor(color.hex) }}
                 >
-                  <div className="flex flex-col items-center gap-0.5">
-                    <Check className="h-5 w-5" />
+                  <div className="relative flex flex-col items-center gap-0.5">
+                    <Check className={cn("h-5 w-5", copiedIndex === index && "animate-spring-pop")} />
+                    {/* Mini sparkle particles */}
+                    {copiedIndex === index && (
+                      <>
+                        <Sparkles 
+                          className="absolute -right-2 -top-2 h-3 w-3 animate-sparkle" 
+                          style={{ animationDelay: "0ms" }}
+                        />
+                        <Sparkles 
+                          className="absolute -left-1 top-0 h-2 w-2 animate-sparkle" 
+                          style={{ animationDelay: "100ms" }}
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </button>
@@ -214,27 +252,39 @@ export function EditablePalette({
               <button
                 onClick={handleLike}
                 className={cn(
-                  "flex h-11 w-11 items-center justify-center rounded-2xl transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "relative flex h-11 w-11 items-center justify-center rounded-2xl transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   liked ? "bg-rose-50 text-rose-500" : "bg-secondary/60 text-muted-foreground"
                 )}
               >
-                <Heart className={cn("h-[18px] w-[18px]", liked && "fill-current")} />
+                <Heart className={cn(
+                  "h-[18px] w-[18px]", 
+                  liked && "fill-current",
+                  heartAnimating && "animate-heart-burst"
+                )} />
+                {/* Micro burst glow */}
+                {heartAnimating && (
+                  <span className="absolute inset-0 rounded-2xl bg-rose-400/20 animate-scale-in" />
+                )}
               </button>
             </div>
           </div>
 
-          {/* Color chips - iOS style pills */}
+          {/* Color chips - iOS style pills with stagger animation */}
           <div className="flex flex-wrap gap-2">
             {currentPalette.colors.map((color, index) => (
               <button
-                key={index}
+                key={`${regenerateKey}-${index}`}
                 onClick={() => copyToClipboard(color.hex, index)}
                 className={cn(
-                  "flex h-9 items-center gap-2 rounded-full px-3 text-[12px] font-medium transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "flex h-9 items-center gap-2 rounded-full px-3 text-[12px] font-medium",
+                  "transition-transform duration-150 active:scale-95",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "animate-stagger-fade-in",
                   lockedColors[index]
                     ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
                     : "bg-secondary/70 text-secondary-foreground"
                 )}
+                style={{ animationDelay: `${index * 30}ms` }}
               >
                 {lockedColors[index] && <Lock className="h-3 w-3" />}
                 <span

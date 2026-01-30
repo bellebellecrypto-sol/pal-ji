@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Check, X, AlertTriangle, Info } from "lucide-react";
 
@@ -10,6 +10,7 @@ interface Toast {
   id: string;
   message: string;
   type: ToastType;
+  isExiting?: boolean;
 }
 
 interface ToastContextType {
@@ -47,13 +48,22 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts((prev) => [...prev, { id, message, type }]);
 
+    // Start exit animation before removal
+    setTimeout(() => {
+      setToasts((prev) => prev.map((t) => t.id === id ? { ...t, isExiting: true } : t));
+    }, 2200);
+
+    // Remove after exit animation
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 2500);
   }, []);
 
   const dismissToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts((prev) => prev.map((t) => t.id === id ? { ...t, isExiting: true } : t));
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 200);
   }, []);
 
   return (
@@ -69,8 +79,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               onClick={() => dismissToast(toast.id)}
               className={cn(
                 "pointer-events-auto flex items-center gap-2.5 rounded-2xl px-4 py-3 shadow-lg",
-                "animate-in fade-in slide-in-from-top-4 duration-300",
-                "cursor-pointer transition-all duration-200 active:scale-95",
+                "cursor-pointer transition-transform duration-150 active:scale-95",
+                toast.isExiting ? "animate-toast-fade-out" : "animate-toast-slide-up",
                 toastStyles[toast.type]
               )}
             >
