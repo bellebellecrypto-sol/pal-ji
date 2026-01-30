@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 import { useState } from "react";
 import { generatePalette, type Palette, type UseCase } from "@/lib/colors";
@@ -46,7 +46,7 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
 
       <main className="mx-auto max-w-lg px-5 pt-24">
         <section className="mb-6">
-          <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+          <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
             Choose Category
           </h2>
           <UseCaseSelector selectedUseCase={selectedUseCase} onSelect={setSelectedUseCase} />
@@ -56,7 +56,7 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
           <Button
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="w-full rounded-2xl py-5 text-[15px] font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
+            className="w-full rounded-2xl py-5 text-[15px] font-semibold shadow-sm transition-transform duration-150 active:scale-[0.98] disabled:opacity-70"
           >
             <RefreshCw
               className={cn("mr-2 h-5 w-5", isGenerating && "animate-spin")}
@@ -67,16 +67,25 @@ export function GenerateView({ onSave, savedPalettes }: GenerateViewProps) {
 
         {currentPalette && (
           <section className="animate-fade-up">
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
               Your Palette
             </h2>
-            <EditablePalette
-              palette={currentPalette}
-              useCase={selectedUseCase}
-              onSave={onSave}
-              onPaletteChange={handlePaletteChange}
-              isSaved={isPaletteSaved(currentPalette)}
-            />
+            <div className="relative">
+              <EditablePalette
+                palette={currentPalette}
+                useCase={selectedUseCase}
+                onSave={onSave}
+                onPaletteChange={handlePaletteChange}
+                isSaved={isPaletteSaved(currentPalette)}
+              />
+              {/* Loading overlay while regenerating */}
+              {isGenerating && (
+                <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-3xl">
+                  <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px]" />
+                  <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                </div>
+              )}
+            </div>
           </section>
         )}
 
