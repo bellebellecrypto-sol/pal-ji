@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   type Gradient,
   type GradientType,
   type GradientDirection,
-  type GradientStop,
   generateGradientCSS,
   generateRandomGradient,
   getContrastColor,
+  type Palette,
 } from "@/lib/colors";
 import { IosHeader } from "./ios-header";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,10 @@ import {
   Plus,
   Trash2,
   Share2,
+  Palette as PaletteIcon,
+  ChevronDown,
+  X,
+  Sparkles,
 } from "lucide-react";
 
 const gradientTypes: { id: GradientType; label: string }[] = [
@@ -39,12 +43,43 @@ const directions: { id: GradientDirection; label: string; angle: string }[] = [
   { id: "to top left", label: "TL", angle: "315deg" },
 ];
 
-export function GradientView() {
+interface GradientViewProps {
+  savedPalettes?: Palette[];
+}
+
+export function GradientView({ savedPalettes = [] }: GradientViewProps) {
   const [gradient, setGradient] = useState<Gradient>(generateRandomGradient);
   const [copied, setCopied] = useState(false);
+  const [showPaletteSelector, setShowPaletteSelector] = useState(false);
+  const [selectedPalette, setSelectedPalette] = useState<Palette | null>(null);
   const { impact, notification } = useHaptics();
   const { copy } = useClipboard();
   const { share, canShare } = useShare();
+
+  // Generate gradient from a palette
+  const generateFromPalette = async (palette: Palette) => {
+    await impact("medium");
+    setSelectedPalette(palette);
+    
+    // Create gradient stops from palette colors
+    const stops = palette.colors.slice(0, 4).map((color, index, arr) => ({
+      color: color.hex,
+      position: (index / (arr.length - 1)) * 100,
+    }));
+    
+    setGradient({
+      type: "linear",
+      direction: "to right",
+      stops,
+      name: `${palette.name} Gradient`,
+    });
+    setShowPaletteSelector(false);
+  };
+
+  const clearPaletteSelection = async () => {
+    await impact("light");
+    setSelectedPalette(null);
+  };
 
   const handleGenerate = async () => {
     await impact("medium");
@@ -152,14 +187,90 @@ export function GradientView() {
           </div>
         </div>
 
-        {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          className="group mb-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-semibold text-primary-foreground shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]"
-        >
-          <RefreshCw className="h-5 w-5 transition-transform group-hover:rotate-90" />
-          Generate New Gradient
-        </button>
+        {/* Palette Selection / Generate Section */}
+        <div className="mb-6 space-y-3">
+          {/* From Palette Button */}
+          {savedPalettes.length > 0 && (
+            <button
+              onClick={() => setShowPaletteSelector(true)}
+              className={cn(
+                "flex w-full items-center justify-between rounded-2xl p-4 transition-all duration-200",
+                selectedPalette
+                  ? "bg-primary/10 ring-2 ring-primary/30"
+                  : "bg-card ring-1 ring-border hover:ring-primary/30"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "flex h-10 w-10 items-center justify-center rounded-xl",
+                  selectedPalette ? "bg-primary/20" : "bg-secondary"
+                )}>
+                  <PaletteIcon className={cn(
+                    "h-5 w-5",
+                    selectedPalette ? "text-primary" : "text-muted-foreground"
+                  )} />
+                </div>
+                <div className="text-left">
+                  {selectedPalette ? (
+                    <>
+                      <p className="text-sm font-semibold text-foreground">{selectedPalette.name}</p>
+                      <div className="mt-1 flex gap-1">
+                        {selectedPalette.colors.slice(0, 4).map((c, i) => (
+                          <span
+                            key={i}
+                            className="h-3 w-3 rounded-full ring-1 ring-black/10"
+                            style={{ backgroundColor: c.hex }}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm font-medium text-foreground">Use Saved Palette</p>
+                      <p className="text-xs text-muted-foreground">Create gradient from your colors</p>
+                    </>
+                  )}
+                </div>
+              </div>
+              {selectedPalette ? (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clearPaletteSelection();
+                  }}
+                  className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              )}
+            </button>
+          )}
+
+          {/* Generate Random Button */}
+          <button
+            onClick={handleGenerate}
+            className={cn(
+              "group flex w-full items-center justify-center gap-2 rounded-2xl py-4 font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-[0.98]",
+              selectedPalette
+                ? "bg-secondary text-secondary-foreground"
+                : "bg-primary text-primary-foreground"
+            )}
+          >
+            {selectedPalette ? (
+              <>
+                <Sparkles className="h-5 w-5" />
+                Generate Random Instead
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-5 w-5 transition-transform group-hover:rotate-90" />
+                Generate Random Gradient
+              </>
+            )}
+          </button>
+        </div>
 
         {/* Type Selector */}
         <section className="mb-6">
@@ -309,6 +420,83 @@ export function GradientView() {
           </div>
         </section>
       </main>
+
+      {/* Palette Selector Bottom Sheet */}
+      {showPaletteSelector && (
+        <div className="fixed inset-0 z-50">
+          <div
+            className="absolute inset-0 bg-foreground/25 backdrop-blur-md transition-opacity"
+            onClick={() => setShowPaletteSelector(false)}
+          />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-hidden rounded-t-[2rem] bg-background pb-safe shadow-2xl">
+            {/* Handle bar */}
+            <div className="flex justify-center py-3">
+              <div className="h-1 w-10 rounded-full bg-border" />
+            </div>
+            
+            {/* Header */}
+            <div className="border-b border-border/60 px-5 pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold tracking-tight text-foreground">Select Palette</h2>
+                  <p className="text-xs text-muted-foreground">Choose colors for your gradient</p>
+                </div>
+                <button
+                  onClick={() => setShowPaletteSelector(false)}
+                  className="rounded-xl bg-secondary/80 p-2 text-secondary-foreground transition-colors hover:bg-secondary"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Palette List */}
+            <div className="overflow-y-auto p-5" style={{ maxHeight: "calc(70vh - 120px)" }}>
+              <div className="space-y-3">
+                {savedPalettes.map((palette) => (
+                  <button
+                    key={palette.id}
+                    onClick={() => generateFromPalette(palette)}
+                    className={cn(
+                      "w-full rounded-2xl p-4 text-left transition-all duration-200",
+                      selectedPalette?.id === palette.id
+                        ? "bg-primary/10 ring-2 ring-primary"
+                        : "bg-card ring-1 ring-border hover:ring-primary/50"
+                    )}
+                  >
+                    {/* Color Preview */}
+                    <div className="mb-3 flex h-12 overflow-hidden rounded-xl">
+                      {palette.colors.map((color, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 first:rounded-l-xl last:rounded-r-xl"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* Palette Info */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{palette.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {palette.colors.length} colors
+                        </p>
+                      </div>
+                      {selectedPalette?.id === palette.id && (
+                        <span className="flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[10px] font-semibold text-primary-foreground">
+                          <Check className="h-3 w-3" />
+                          Selected
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -190,7 +190,7 @@ function HomeContent() {
           onSelectPalette={selectPaletteForVisualizer}
         />
       )}
-      {activeTab === "gradient" && <GradientView />}
+      {activeTab === "gradient" && <GradientView savedPalettes={savedPalettes} />}
       {activeTab === "saved" && (
         <SavedView
           savedPalettes={savedPalettes}
