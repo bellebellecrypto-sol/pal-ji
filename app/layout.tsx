@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased overscroll-none">
-        <AuthProvider>{children}</AuthProvider>
+        {children}
       </body>
     </html>
   );
