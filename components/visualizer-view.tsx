@@ -13,6 +13,8 @@ import {
   LayoutDashboard,
   Check,
   X,
+  Palette as PaletteIcon,
+  ChevronDown,
 } from "lucide-react";
 
 type VisualizerMode = "mobile" | "dashboard" | "card" | "email" | "website";
@@ -53,10 +55,10 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
     <div className="min-h-screen pb-28">
       <IosHeader title="Visualizer" subtitle="See your palette in action" />
 
-      <main className="mx-auto max-w-lg px-6 pt-24">
+      <main className="mx-auto max-w-lg px-5 pt-24">
         {/* Mode Selector */}
-        <div className="mb-6 -mx-6 px-6 overflow-x-auto">
-          <div className="flex gap-2 pb-2">
+        <div className="mb-4 -mx-5 px-5 overflow-x-auto">
+          <div className="flex gap-1.5 pb-2">
             {modes.map((m) => {
               const Icon = m.icon;
               return (
@@ -64,13 +66,13 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
                   key={m.id}
                   onClick={() => handleModeChange(m.id)}
                   className={cn(
-                    "flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
+                    "flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200",
                     mode === m.id
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-muted"
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "bg-secondary/80 text-secondary-foreground hover:bg-secondary"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-3.5 w-3.5" />
                   {m.label}
                 </button>
               );
@@ -78,51 +80,53 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
           </div>
         </div>
 
-        {/* Select Palette Button */}
+        {/* Select Palette Button - Consistent with Gradient view */}
         <button
           onClick={onSelectPalette}
           className={cn(
-            "mb-6 w-full rounded-2xl border-2 p-4 text-center transition-all duration-200",
-            palette 
-              ? "border-primary/30 bg-primary/5 hover:bg-primary/10" 
-              : "border-dashed border-border bg-secondary/50 hover:bg-secondary hover:border-muted-foreground"
+            "mb-5 flex w-full items-center justify-between rounded-2xl p-4 transition-all duration-200",
+            palette
+              ? "bg-primary/10 ring-2 ring-primary/30 hover:bg-primary/15"
+              : "bg-card ring-1 ring-border hover:ring-primary/30"
           )}
         >
-          {palette ? (
-            <>
-              <div className="mb-2 flex justify-center gap-1.5">
-                {palette.colors.map((c, i) => (
-                  <span
-                    key={i}
-                    className="h-6 w-6 rounded-lg ring-1 ring-black/10"
-                    style={{ backgroundColor: c.hex }}
-                  />
-                ))}
-              </div>
-              <p className="text-sm font-semibold text-foreground">{palette.name}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">Tap to change palette</p>
-            </>
-          ) : (
-            <>
-              <div className="mb-2 flex justify-center gap-1.5">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <span
-                    key={i}
-                    className="h-6 w-6 rounded-lg bg-muted animate-pulse"
-                    style={{ animationDelay: `${i * 100}ms` }}
-                  />
-                ))}
-              </div>
-              <p className="text-sm font-medium text-foreground">Select a palette</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Choose from your saved palettes to preview
-              </p>
-            </>
-          )}
+          <div className="flex items-center gap-3">
+            <div className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
+              palette ? "bg-primary/20" : "bg-secondary"
+            )}>
+              <PaletteIcon className={cn(
+                "h-5 w-5",
+                palette ? "text-primary" : "text-muted-foreground"
+              )} />
+            </div>
+            <div className="text-left">
+              {palette ? (
+                <>
+                  <p className="text-sm font-semibold text-foreground">{palette.name}</p>
+                  <div className="mt-1 flex gap-1">
+                    {palette.colors.map((c, i) => (
+                      <span
+                        key={i}
+                        className="h-3 w-3 rounded-full ring-1 ring-black/10"
+                        style={{ backgroundColor: c.hex }}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-foreground">Use Saved Palette</p>
+                  <p className="text-xs text-muted-foreground">Select colors to preview</p>
+                </>
+              )}
+            </div>
+          </div>
+          <ChevronDown className="h-5 w-5 text-muted-foreground" />
         </button>
 
         {/* Visualizer Preview */}
-        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-lg">
           {mode === "mobile" && (
             <MobileAppPreview primary={primary} secondary={secondary} dark={dark} muted={muted} light={light} />
           )}
@@ -140,41 +144,43 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
           )}
         </div>
 
-        {/* Color Legend */}
-        <div className="mt-6 grid grid-cols-5 gap-2">
+        {/* Color Legend - Compact inline display */}
+        <div className="mt-4 flex items-center justify-center gap-3 rounded-xl bg-secondary/50 px-4 py-2.5">
           {colors.map((c, i) => (
-            <div key={i} className="text-center">
+            <div key={i} className="flex items-center gap-1.5">
               <div
-                className="mx-auto mb-1 h-8 w-8 rounded-full border border-border"
+                className="h-5 w-5 rounded-md ring-1 ring-black/10"
                 style={{ backgroundColor: c.hex }}
               />
-              <p className="text-xs text-muted-foreground">{["Primary", "Secondary", "Dark", "Muted", "Light"][i]}</p>
+              <span className="text-[10px] font-medium text-muted-foreground">
+                {["Pri", "Sec", "Dark", "Mut", "Light"][i]}
+              </span>
             </div>
           ))}
         </div>
 
         {/* Contrast Checker Panel */}
         {palette && (
-          <div className="mt-6 rounded-2xl bg-card p-4 ring-1 ring-border/50">
-            <h3 className="mb-3 text-sm font-semibold text-foreground">Contrast Check</h3>
-            <div className="space-y-2">
+          <div className="mt-4 rounded-xl bg-card p-3 ring-1 ring-border/50">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Contrast</h3>
+            <div className="grid grid-cols-2 gap-2">
               <ContrastRow 
-                label="Primary on Light" 
+                label="Primary/Light" 
                 fg={primary.hex} 
                 bg={light.hex}
               />
               <ContrastRow 
-                label="Dark on Light" 
+                label="Dark/Light" 
                 fg={dark.hex} 
                 bg={light.hex}
               />
               <ContrastRow 
-                label="Light on Primary" 
+                label="Light/Primary" 
                 fg={light.hex} 
                 bg={primary.hex}
               />
               <ContrastRow 
-                label="Light on Dark" 
+                label="Light/Dark" 
                 fg={light.hex} 
                 bg={dark.hex}
               />
@@ -191,25 +197,22 @@ function ContrastRow({ label, fg, bg }: { label: string; fg: string; bg: string 
   const level = getWCAGLevel(ratio);
   
   return (
-    <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-3 py-2">
-      <div className="flex items-center gap-2">
-        <div className="relative flex h-6 w-10 items-center justify-center overflow-hidden rounded" style={{ backgroundColor: bg }}>
-          <span className="text-[10px] font-bold" style={{ color: fg }}>Aa</span>
+    <div className="flex items-center justify-between rounded-lg bg-secondary/40 px-2.5 py-1.5">
+      <div className="flex items-center gap-1.5">
+        <div className="relative flex h-5 w-7 items-center justify-center overflow-hidden rounded" style={{ backgroundColor: bg }}>
+          <span className="text-[8px] font-bold" style={{ color: fg }}>Aa</span>
         </div>
-        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="text-[10px] text-muted-foreground">{label}</span>
       </div>
-      <div className="flex items-center gap-2">
-        <span className="font-mono text-xs text-foreground">{ratio.toFixed(1)}:1</span>
-        <span className={cn(
-          "flex h-5 items-center gap-0.5 rounded px-1.5 text-[10px] font-semibold",
-          level === "AAA" && "bg-emerald-100 text-emerald-700",
-          level === "AA" && "bg-amber-100 text-amber-700",
-          level === "Fail" && "bg-red-100 text-red-600"
-        )}>
-          {level === "Fail" ? <X className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-          {level}
-        </span>
-      </div>
+      <span className={cn(
+        "flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[9px] font-semibold",
+        level === "AAA" && "bg-emerald-100 text-emerald-700",
+        level === "AA" && "bg-amber-100 text-amber-700",
+        level === "Fail" && "bg-red-100 text-red-600"
+      )}>
+        {level === "Fail" ? <X className="h-2.5 w-2.5" /> : <Check className="h-2.5 w-2.5" />}
+        {ratio.toFixed(1)}
+      </span>
     </div>
   );
 }
