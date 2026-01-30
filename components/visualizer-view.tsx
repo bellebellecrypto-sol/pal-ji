@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type Palette, getContrastColor } from "@/lib/colors";
+import { type Palette, getContrastColor, getContrastRatio, getWCAGLevel } from "@/lib/colors";
 import { IosHeader } from "./ios-header";
 import { cn } from "@/lib/utils";
 import { useHaptics } from "@/hooks/use-native";
@@ -11,6 +11,8 @@ import {
   CreditCard,
   Mail,
   LayoutDashboard,
+  Check,
+  X,
 } from "lucide-react";
 
 type VisualizerMode = "mobile" | "dashboard" | "card" | "email" | "website";
@@ -150,7 +152,64 @@ export function VisualizerView({ palette, onSelectPalette }: VisualizerViewProps
             </div>
           ))}
         </div>
+
+        {/* Contrast Checker Panel */}
+        {palette && (
+          <div className="mt-6 rounded-2xl bg-card p-4 ring-1 ring-border/50">
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Contrast Check</h3>
+            <div className="space-y-2">
+              <ContrastRow 
+                label="Primary on Light" 
+                fg={primary.hex} 
+                bg={light.hex}
+              />
+              <ContrastRow 
+                label="Dark on Light" 
+                fg={dark.hex} 
+                bg={light.hex}
+              />
+              <ContrastRow 
+                label="Light on Primary" 
+                fg={light.hex} 
+                bg={primary.hex}
+              />
+              <ContrastRow 
+                label="Light on Dark" 
+                fg={light.hex} 
+                bg={dark.hex}
+              />
+            </div>
+          </div>
+        )}
       </main>
+    </div>
+  );
+}
+
+function ContrastRow({ label, fg, bg }: { label: string; fg: string; bg: string }) {
+  const ratio = getContrastRatio(fg, bg);
+  const level = getWCAGLevel(ratio);
+  
+  return (
+    <div className="flex items-center justify-between rounded-xl bg-secondary/50 px-3 py-2">
+      <div className="flex items-center gap-2">
+        <div className="relative flex h-6 w-10 items-center justify-center overflow-hidden rounded" style={{ backgroundColor: bg }}>
+          <span className="text-[10px] font-bold" style={{ color: fg }}>Aa</span>
+        </div>
+        <span className="text-xs text-muted-foreground">{label}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-xs text-foreground">{ratio.toFixed(1)}:1</span>
+        <span className={cn(
+          "flex h-5 items-center gap-0.5 rounded px-1.5 text-[10px] font-semibold",
+          level === "AAA" && "bg-emerald-100 text-emerald-700",
+          level === "AA" && "bg-amber-100 text-amber-700",
+          level === "Fail" && "bg-red-100 text-red-600"
+        )}>
+          {level === "Fail" ? <X className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+          {level}
+        </span>
+      </div>
     </div>
   );
 }

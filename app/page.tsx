@@ -7,7 +7,7 @@ import { GenerateView } from "@/components/generate-view";
 import { ExploreView } from "@/components/explore-view";
 import { VisualizerView } from "@/components/visualizer-view";
 import { GradientView } from "@/components/gradient-view";
-import { ContrastChecker } from "@/components/contrast-checker";
+import { SavedView } from "@/components/saved-view";
 import { type Palette } from "@/lib/colors";
 import { useNativeStorage } from "@/hooks/use-native";
 import { ToastProvider, useToast } from "@/components/toast";
@@ -15,7 +15,7 @@ import { Onboarding } from "@/components/onboarding";
 import { SwipeablePaletteCard } from "@/components/swipeable-palette-card";
 import { useAuth } from "@/contexts/auth-context";
 import { usePaletteSync } from "@/hooks/use-palette-sync";
-import { ArrowRight, Heart, Settings, X, Search, User, Cloud, CloudOff, RefreshCw, LogOut } from "lucide-react";
+import { Heart, Settings, X, Search, User, Cloud, CloudOff, RefreshCw, LogOut, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function HomeContent() {
@@ -122,12 +122,15 @@ function HomeContent() {
   const selectPaletteForVisualizer = () => {
     if (savedPalettes.length > 0) {
       setShowSaved(true);
+    } else {
+      setActiveTab("saved");
     }
   };
 
   const handleSelectForVisualizer = (palette: Palette) => {
     setVisualizerPalette(palette);
     setShowSaved(false);
+    setActiveTab("visualizer");
   };
 
   const handleOnboardingComplete = async () => {
@@ -155,28 +158,8 @@ function HomeContent() {
       {/* Onboarding */}
       {showOnboarding && <Onboarding onComplete={handleOnboardingComplete} />}
       
-      {/* Top Action Buttons */}
-      <div className="fixed right-4 top-4 z-50 flex gap-2 pt-safe">
-        <button
-          onClick={() => setShowSaved(true)}
-          className={cn(
-            "group relative flex h-10 w-10 items-center justify-center rounded-xl shadow-sm transition-all duration-200 ease-out",
-            "active:scale-90",
-            showSaved
-              ? "bg-primary text-primary-foreground shadow-md"
-              : "bg-card/95 text-foreground ring-1 ring-border/60 backdrop-blur-xl hover:bg-card hover:shadow-md"
-          )}
-        >
-          <Heart className={cn(
-            "h-[18px] w-[18px] transition-transform duration-200",
-            showSaved ? "fill-current" : "group-hover:scale-110"
-          )} />
-          {savedPalettes.length > 0 && (
-            <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white shadow-sm ring-2 ring-background">
-              {savedPalettes.length > 9 ? "9+" : savedPalettes.length}
-            </span>
-          )}
-        </button>
+      {/* Top Settings Button */}
+      <div className="fixed right-4 top-4 z-50 pt-safe">
         <button
           onClick={() => setShowSettings(true)}
           className={cn(
@@ -208,7 +191,14 @@ function HomeContent() {
         />
       )}
       {activeTab === "gradient" && <GradientView />}
-      {activeTab === "contrast" && <ContrastChecker savedPalettes={savedPalettes} />}
+      {activeTab === "saved" && (
+        <SavedView
+          savedPalettes={savedPalettes}
+          isLoading={isLoading}
+          onDelete={handleDeletePalette}
+          onSelectForVisualizer={handleSelectForVisualizer}
+        />
+      )}
 
       {/* Bottom Sheet: Saved Palettes */}
       {showSaved && (
@@ -441,7 +431,7 @@ function HomeContent() {
         </div>
       )}
 
-      <TabBar activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabBar activeTab={activeTab} onTabChange={setActiveTab} savedCount={savedPalettes.length} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import {
   Sparkles,
   Eye,
   Blend,
-  Contrast,
+  Heart,
 } from "lucide-react";
 
 type Tab =
@@ -14,12 +14,12 @@ type Tab =
   | "explore"
   | "visualizer"
   | "gradient"
-  | "extract"
-  | "contrast";
+  | "saved";
 
 interface TabBarProps {
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
+  savedCount?: number;
 }
 
 const tabs: { id: Tab; label: string; icon: typeof Palette }[] = [
@@ -27,10 +27,10 @@ const tabs: { id: Tab; label: string; icon: typeof Palette }[] = [
   { id: "explore", label: "Explore", icon: Palette },
   { id: "visualizer", label: "Preview", icon: Eye },
   { id: "gradient", label: "Gradient", icon: Blend },
-  { id: "contrast", label: "Contrast", icon: Contrast },
+  { id: "saved", label: "Saved", icon: Heart },
 ];
 
-export function TabBar({ activeTab, onTabChange }: TabBarProps) {
+export function TabBar({ activeTab, onTabChange, savedCount = 0 }: TabBarProps) {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/95 pb-safe backdrop-blur-2xl">
       <div className="mx-auto max-w-lg">
@@ -38,6 +38,7 @@ export function TabBar({ activeTab, onTabChange }: TabBarProps) {
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
+            const showBadge = tab.id === "saved" && savedCount > 0;
             return (
               <button
                 key={tab.id}
@@ -62,10 +63,16 @@ export function TabBar({ activeTab, onTabChange }: TabBarProps) {
                   <Icon
                     className={cn(
                       "h-[22px] w-[22px] transition-all duration-200 ease-out",
-                      isActive && "scale-105"
+                      isActive && "scale-105",
+                      tab.id === "saved" && isActive && "fill-current"
                     )}
                     strokeWidth={isActive ? 2.25 : 1.75}
                   />
+                  {showBadge && (
+                    <span className="absolute -right-2 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+                      {savedCount > 9 ? "9+" : savedCount}
+                    </span>
+                  )}
                 </span>
                 
                 <span 
